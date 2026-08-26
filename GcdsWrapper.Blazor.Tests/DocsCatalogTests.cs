@@ -16,7 +16,6 @@ public sealed class DocsCatalogTests
         var expected = typeof(GcdsAssets).Assembly.GetTypes()
             .Where(type => type.Namespace == typeof(GcdsAssets).Namespace)
             .Where(type => !type.IsAbstract && typeof(IComponent).IsAssignableFrom(type))
-            .Where(type => type != typeof(RawGcdsDemo))
             .ToHashSet();
         var actual = DocsCatalog.All.Select(item => item.WrapperType).ToArray();
 

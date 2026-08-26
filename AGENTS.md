@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-This repository contains a .NET 10 Razor class library under `GcdsWrapper.Blazor/` and a minimal interactive host under `GcdsWrapper.Demo/`. Specialized form wrappers live in `Gcds*.razor`; attribute-oriented wrappers and their shared renderer are in `GcdsComponents.cs` and `GcdsComponentBase.cs`. Shared enums and version configuration are in `GcdsEnums.cs` and `GcdsVersion.cs`. Browser-facing JavaScript interop belongs in `GcdsWrapper.Blazor/wwwroot/`. `RawGcdsDemo.razor` is a lightweight manual integration example. Build outputs in `bin/` and `obj/` are generated and must not be committed.
+This repository contains a .NET 10 Razor class library under `GcdsWrapper.Blazor/` and a minimal interactive host under `GcdsWrapper.Demo/`. Specialized form wrappers live in `Gcds*.razor`; attribute-oriented wrappers and their shared renderer are in `GcdsComponents.cs` and `GcdsComponentBase.cs`. Shared enums and version configuration are in `GcdsEnums.cs` and `GcdsVersion.cs`. Browser-facing JavaScript interop belongs in `GcdsWrapper.Blazor/wwwroot/`. Build outputs in `bin/` and `obj/` are generated and must not be committed.
 
 Automated bUnit and xUnit tests live in `GcdsWrapper.Blazor.Tests/`.
 
@@ -16,7 +16,7 @@ Automated bUnit and xUnit tests live in `GcdsWrapper.Blazor.Tests/`.
 - `dotnet test GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj` runs the component tests with Microsoft Testing Platform.
 - `dotnet format GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj --verify-no-changes` checks standard .NET formatting.
 
-The library is not directly runnable. Exercise changes from a consuming Blazor app; render `GcdsAssets` once and use `RawGcdsDemo` to verify upstream GCDS assets.
+The library is not directly runnable. Exercise changes from a consuming Blazor app and render `GcdsAssets` once to load the upstream GCDS assets.
 
 ## Coding Style & Naming Conventions
 
