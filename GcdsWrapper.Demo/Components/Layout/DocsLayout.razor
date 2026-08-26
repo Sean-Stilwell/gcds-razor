@@ -3,9 +3,13 @@
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 
-<GcdsHeader LangHref="@LanguageHref" SkipToHref="#main-content" />
-
 <GcdsContainer Size="xl" Alignment="center">
+    <div class="language-toggle-row">
+        <GcdsLangToggle Href="@LanguageHref" Lang="@(IsFrench ? "fr" : "en")"/>
+    </div>
+
+    <Disclaimer IsFrench=@IsFrench />
+
     <GcdsGrid Columns="320px minmax(0, 1fr)">
         <DocsSideNavigation Language="@Language" Current="@Current" />
         <main id="main-content" class="docs-content">
@@ -14,10 +18,9 @@
     </GcdsGrid>
 </GcdsContainer>
 
-<GcdsFooter Display="compact" />
-
 @code {
     private DocsLanguage Language => DocsLanguageExtensions.FromPath(Navigation.ToBaseRelativePath(Navigation.Uri));
+    private bool IsFrench => Language == DocsLanguage.French;
     private DocsComponentDescriptor? Current => DocsCatalog.FindByPath(Navigation.ToBaseRelativePath(Navigation.Uri));
     private string LanguageHref => Navigation.ToAbsoluteUri(
         (Current?.RouteFor(OppositeLanguage) ?? OppositeLanguage.ComponentsRoute()).TrimStart('/')).ToString();

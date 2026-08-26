@@ -3,8 +3,8 @@
 <div class="docs-copy-row">
     <GcdsButton Size="GcdsButtonSize.Small" OnClick="CopyAsync">@CopyLabel</GcdsButton>
 </div>
-<pre class="docs-code"><code>@Code</code></pre>
-<span role="status" aria-live="polite">@status</span>
+<pre class="docs-code"><GcdsText><code>@Code</code></GcdsText></pre>
+<span role="status" aria-live="polite"><GcdsText>@status</GcdsText></span>
 
 @code {
     [Parameter, EditorRequired] public string Code { get; set; } = string.Empty;

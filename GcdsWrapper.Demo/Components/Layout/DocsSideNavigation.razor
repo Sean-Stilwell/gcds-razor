@@ -13,8 +13,8 @@
             var categoryName = DocsCatalog.CategoryName(category).Get(Language);
             var isOpen = Current?.Category == category;
             <GcdsNavGroup MenuLabel="@categoryName"
-                          OpenTrigger="@OpenLabel(categoryName)"
-                          CloseTrigger="@CloseLabel(categoryName)"
+                          OpenTrigger="@categoryName"
+                          CloseTrigger="@categoryName"
                           Open="@isOpen">
                 @foreach (var item in DocsCatalog.All.Where(item => item.Category == category))
                 {
@@ -35,12 +35,4 @@
     [Parameter] public DocsComponentDescriptor? Current { get; set; }
 
     private string SiteHref(string route) => Navigation.ToAbsoluteUri(route.TrimStart('/')).ToString();
-
-    private string OpenLabel(string category) => Language == DocsLanguage.French
-        ? $"Ouvrir {category}"
-        : $"Open {category}";
-
-    private string CloseLabel(string category) => Language == DocsLanguage.French
-        ? $"Fermer {category}"
-        : $"Close {category}";
 }

@@ -172,6 +172,7 @@ public sealed class GcdsLangToggle : GcdsComponentBase
 {
     protected override string TagName => "gcds-lang-toggle";
     [Parameter, EditorRequired] public string Href { get; set; } = default!;
+    [Parameter, EditorRequired] public string Lang { get; set; }
 }
 
 public sealed class GcdsLink : GcdsComponentBase

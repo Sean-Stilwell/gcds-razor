@@ -1,0 +1,4 @@
+.language-toggle-row {
+    display: flex;
+    justify-content: flex-end;
+}

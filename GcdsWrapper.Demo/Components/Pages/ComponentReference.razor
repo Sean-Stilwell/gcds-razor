@@ -47,22 +47,22 @@ else
         <table class="docs-api">
             <thead>
                 <tr>
-                    <th scope="col">@(IsFrench ? "Nom" : "Name")</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">@(IsFrench ? "Obligatoire" : "Required")</th>
-                    <th scope="col">@(IsFrench ? "Valeur par défaut" : "Default")</th>
-                    <th scope="col">@(IsFrench ? "Déclaré par" : "Declared by")</th>
+                    <th scope="col"><GcdsText>@(IsFrench ? "Nom" : "Name")</GcdsText></th>
+                    <th scope="col"><GcdsText>Type</GcdsText></th>
+                    <th scope="col"><GcdsText>@(IsFrench ? "Obligatoire" : "Required")</GcdsText></th>
+                    <th scope="col"><GcdsText>@(IsFrench ? "Valeur par défaut" : "Default")</GcdsText></th>
+                    <th scope="col"><GcdsText>@(IsFrench ? "Déclaré par" : "Declared by")</GcdsText></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var parameter in ApiParameters)
                 {
                     <tr>
-                        <td><code>@parameter.Name</code></td>
-                        <td><code>@parameter.Type</code></td>
-                        <td>@(parameter.Required ? (IsFrench ? "Oui" : "Yes") : (IsFrench ? "Non" : "No"))</td>
-                        <td>@(parameter.Default ?? "—")</td>
-                        <td><code>@parameter.DeclaredBy</code></td>
+                        <td><GcdsText>@parameter.Name</GcdsText></td>
+                        <td><GcdsText>@parameter.Type</GcdsText></td>
+                        <td><GcdsText>@(parameter.Required ? (IsFrench ? "Oui" : "Yes") : (IsFrench ? "Non" : "No"))</GcdsText></td>
+                        <td><GcdsText>@(parameter.Default ?? "—")</GcdsText></td>
+                        <td><GcdsText>@parameter.DeclaredBy</GcdsText></td>
                     </tr>
                 }
             </tbody>

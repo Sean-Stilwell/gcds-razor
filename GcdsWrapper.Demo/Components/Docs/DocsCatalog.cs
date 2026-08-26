@@ -61,7 +61,7 @@ internal static class DocsCatalog
         D<GcdsLabel, GcdsLabelExample>("label", "Label", "Étiquette", "label", "etiquette", DocsCategory.Supporting,
             "input", "champ-saisie", "<GcdsLabel Label=\"Email address\" LabelFor=\"email\" />", "<GcdsLabel Label=\"Adresse courriel\" LabelFor=\"courriel\" />", []),
         D<GcdsLangToggle, GcdsLangToggleExample>("lang-toggle", "Language toggle", "Bascule de langue", "language-toggle", "bascule-langue", DocsCategory.Navigation,
-            "language-toggle", "bascule-langue", "<GcdsLangToggle Href=\"/fr\" />", "<GcdsLangToggle Href=\"/en\" />", ["OnClick", "OnFocus", "OnBlur"]),
+            "language-toggle", "bascule-langue", "<GcdsLangToggle Href=\"/fr\" Lang=\"/fr\" />", "<GcdsLangToggle Href=\"/en\" Lang=\"/en\" />", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsLink, GcdsLinkExample>("link", "Link", "Lien", "link", "lien", DocsCategory.Navigation,
             "link", "lien", "<GcdsLink Href=\"/guide\">Read the guide</GcdsLink>", "<GcdsLink Href=\"/guide\">Lire le guide</GcdsLink>", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsNavGroup, GcdsNavGroupExample>("nav-group", "Navigation group", "Groupe de navigation", "nav-group", "groupe-navigation", DocsCategory.Supporting,
