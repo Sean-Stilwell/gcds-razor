@@ -1,0 +1,18 @@
+@page "/"
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<PageTitle>GCDS Wrapper for Blazor</PageTitle>
+<p class="loading" role="status">Loading documentation… / Chargement de la documentation…</p>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        var language = await JS.InvokeAsync<string>("gcdsWrapperDocs.preferredLanguage");
+        var target = string.Equals(language, "fr", StringComparison.OrdinalIgnoreCase)
+            ? DocsLanguage.French.ComponentsRoute()
+            : DocsLanguage.English.ComponentsRoute();
+        Navigation.NavigateTo(target.TrimStart('/'), replace: true);
+    }
+}

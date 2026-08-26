@@ -1,0 +1,46 @@
+@inject NavigationManager Navigation
+
+<nav aria-label="@(Language == DocsLanguage.French ? "Documentation des composants" : "Component documentation")">
+    <GcdsSideNav Label="@(Language == DocsLanguage.French ? "Composants" : "Components")">
+        <GcdsNavLink Href="@SiteHref(Language.ComponentsRoute())"
+                     Current="@(Current is null)"
+                     AdditionalAttributes="@HomeSlot">
+            @(Language == DocsLanguage.French ? "Tous les composants" : "All components")
+        </GcdsNavLink>
+
+        @foreach (var category in Enum.GetValues<DocsCategory>())
+        {
+            var categoryName = DocsCatalog.CategoryName(category).Get(Language);
+            var isOpen = Current?.Category == category;
+            <GcdsNavGroup MenuLabel="@categoryName"
+                          OpenTrigger="@OpenLabel(categoryName)"
+                          CloseTrigger="@CloseLabel(categoryName)"
+                          Open="@isOpen">
+                @foreach (var item in DocsCatalog.All.Where(item => item.Category == category))
+                {
+                    <GcdsNavLink Href="@SiteHref(item.RouteFor(Language))" Current="@(Current?.Key == item.Key)">
+                        @item.TitleFor(Language)
+                    </GcdsNavLink>
+                }
+            </GcdsNavGroup>
+        }
+    </GcdsSideNav>
+</nav>
+
+@code {
+    private static readonly IReadOnlyDictionary<string, object> HomeSlot =
+        new Dictionary<string, object> { ["slot"] = "home" };
+
+    [Parameter] public DocsLanguage Language { get; set; }
+    [Parameter] public DocsComponentDescriptor? Current { get; set; }
+
+    private string SiteHref(string route) => Navigation.ToAbsoluteUri(route.TrimStart('/')).ToString();
+
+    private string OpenLabel(string category) => Language == DocsLanguage.French
+        ? $"Ouvrir {category}"
+        : $"Open {category}";
+
+    private string CloseLabel(string category) => Language == DocsLanguage.French
+        ? $"Fermer {category}"
+        : $"Close {category}";
+}

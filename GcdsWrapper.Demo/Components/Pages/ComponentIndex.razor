@@ -1,0 +1,45 @@
+@page "/en/components"
+@page "/fr/composants"
+@inject NavigationManager Navigation
+
+<PageTitle>@(IsFrench ? "Composants Blazor GCDS" : "GCDS Blazor components")</PageTitle>
+
+<GcdsHeading Tag="h1">@(IsFrench ? "Composants Blazor GCDS" : "GCDS Blazor components")</GcdsHeading>
+<GcdsText>
+    @(IsFrench
+        ? "Cette bibliothèque fournit des composants Blazor typés pour les éléments Web du Système de design GC. Chaque page porte sur l’API de l’adaptateur; consultez le site officiel pour les conseils de conception et d’accessibilité."
+        : "This library provides typed Blazor components for GC Design System web components. Each page focuses on the wrapper API; consult the official site for design and accessibility guidance.")
+</GcdsText>
+
+<GcdsHeading Tag="h2">@(IsFrench ? "Ajouter la bibliothèque" : "Add the library")</GcdsHeading>
+<GcdsText>
+    @(IsFrench
+        ? "Ajoutez la référence de projet, puis rendez GcdsAssets une seule fois dans le composant racine App.razor."
+        : "Add the project reference, then render GcdsAssets once in the root App.razor component.")
+</GcdsText>
+<CodeBlock Language="@Language" Code="@ProjectReferenceSnippet" />
+<CodeBlock Language="@Language" Code="@AssetsSnippet" />
+
+<GcdsHeading Tag="h2">@(IsFrench ? "Référence des composants" : "Component reference")</GcdsHeading>
+@foreach (var category in Enum.GetValues<DocsCategory>())
+{
+    <GcdsHeading Tag="h3">@DocsCatalog.CategoryName(category).Get(Language)</GcdsHeading>
+    <ul class="component-list">
+        @foreach (var item in DocsCatalog.All.Where(item => item.Category == category))
+        {
+            <li>
+                <GcdsText><GcdsLink Href="@SiteHref(item.RouteFor(Language))">@item.TitleFor(Language)</GcdsLink></GcdsText>
+                
+                <GcdsText><code>@item.WrapperType.Name</code></GcdsText>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private DocsLanguage Language => DocsLanguageExtensions.FromPath(Navigation.ToBaseRelativePath(Navigation.Uri));
+    private bool IsFrench => Language == DocsLanguage.French;
+    private string SiteHref(string route) => Navigation.ToAbsoluteUri(route.TrimStart('/')).ToString();
+    private const string ProjectReferenceSnippet = "<ItemGroup>\n  <ProjectReference Include=\"../GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj\" />\n</ItemGroup>";
+    private const string AssetsSnippet = "@using GcdsWrapper.Blazor\n\n<GcdsAssets />\n<Routes />";
+}

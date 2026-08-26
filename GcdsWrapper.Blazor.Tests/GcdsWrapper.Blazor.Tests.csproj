@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GcdsWrapper.Blazor\GcdsWrapper.Blazor.csproj" />
+    <ProjectReference Include="..\GcdsWrapper.Demo\GcdsWrapper.Demo.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,12 @@
+@inject NavigationManager Navigation
+
+<PageTitle>@(IsFrench ? "Page introuvable" : "Page not found")</PageTitle>
+<GcdsHeading Tag="h1">@(IsFrench ? "Page introuvable" : "Page not found")</GcdsHeading>
+<GcdsText>@(IsFrench ? "La page demandée n’existe pas." : "The requested page does not exist.")</GcdsText>
+<GcdsLink Href="@SiteHref(Language.ComponentsRoute())">@(IsFrench ? "Voir tous les composants" : "View all components")</GcdsLink>
+
+@code {
+    private DocsLanguage Language => DocsLanguageExtensions.FromPath(Navigation.ToBaseRelativePath(Navigation.Uri));
+    private bool IsFrench => Language == DocsLanguage.French;
+    private string SiteHref(string route) => Navigation.ToAbsoluteUri(route.TrimStart('/')).ToString();
+}

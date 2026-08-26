@@ -1,0 +1,21 @@
+@inject IJSRuntime JS
+
+<div class="docs-copy-row">
+    <GcdsButton Size="GcdsButtonSize.Small" OnClick="CopyAsync">@CopyLabel</GcdsButton>
+</div>
+<pre class="docs-code"><code>@Code</code></pre>
+<span role="status" aria-live="polite">@status</span>
+
+@code {
+    [Parameter, EditorRequired] public string Code { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public DocsLanguage Language { get; set; }
+
+    private string? status;
+    private string CopyLabel => Language == DocsLanguage.French ? "Copier" : "Copy";
+
+    private async Task CopyAsync()
+    {
+        await JS.InvokeVoidAsync("gcdsWrapperDocs.copyText", Code);
+        status = Language == DocsLanguage.French ? "Code copié." : "Code copied.";
+    }
+}

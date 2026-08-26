@@ -1,0 +1,119 @@
+@page "/en/components/{Slug}"
+@page "/fr/composants/{Slug}"
+@inject NavigationManager Navigation
+
+@if (Descriptor is null)
+{
+    <PageTitle>@(IsFrench ? "Composant introuvable" : "Component not found")</PageTitle>
+    <GcdsHeading Tag="h1">@(IsFrench ? "Composant introuvable" : "Component not found")</GcdsHeading>
+    <GcdsText>@(IsFrench ? "Ce composant n’existe pas dans le catalogue." : "That component is not in the catalogue.")</GcdsText>
+    <GcdsLink Href="@SiteHref(Language.ComponentsRoute())">@(IsFrench ? "Voir tous les composants" : "View all components")</GcdsLink>
+}
+else
+{
+    <PageTitle>@Descriptor.WrapperType.Name</PageTitle>
+    <GcdsHeading Tag="h1">@Descriptor.TitleFor(Language)</GcdsHeading>
+    <GcdsText>@Descriptor.SummaryFor(Language)</GcdsText>
+
+    <GcdsHeading Tag="h2">@(IsFrench ? "Exemple interactif" : "Live example")</GcdsHeading>
+    <div id="preview" class="docs-preview">
+        <DynamicComponent Type="@Descriptor.ExampleType" Parameters="@ExampleParameters" />
+        @if (Descriptor.IsAssetLoader)
+        {
+            <p role="status">@(IsFrench ? "Les ressources GCDS sont chargées; ce composant ne produit aucun élément visible." : "GCDS assets are loaded; this component has no visible output.")</p>
+        }
+    </div>
+
+    <GcdsHeading Tag="h2">@(IsFrench ? "Utilisation Razor" : "Razor usage")</GcdsHeading>
+    <CodeBlock Language="@Language" Code="@Descriptor.SnippetFor(Language)" />
+
+    @if (Descriptor.SupportsBinding)
+    {
+        <GcdsHeading Tag="h2">EditForm et <code>@@bind-Value</code></GcdsHeading>
+        <GcdsText>
+            @(IsFrench
+                ? "Utilisez @bind-Value dans un EditForm. L’adaptateur met à jour le modèle lors de gcdsChange et transmet les messages du ValidationMessageStore à error-message."
+                : "Use @bind-Value inside an EditForm. The wrapper updates the model on gcdsChange and forwards ValidationMessageStore messages to error-message.")
+        </GcdsText>
+    }
+
+    <GcdsHeading Tag="h2">@(IsFrench ? "Paramètres" : "Parameters")</GcdsHeading>
+    @if (ApiParameters.Count == 0)
+    {
+        <GcdsText>@(IsFrench ? "Ce composant n’accepte aucun paramètre." : "This component has no parameters.")</GcdsText>
+    }
+    else
+    {
+        <table class="docs-api">
+            <thead>
+                <tr>
+                    <th scope="col">@(IsFrench ? "Nom" : "Name")</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">@(IsFrench ? "Obligatoire" : "Required")</th>
+                    <th scope="col">@(IsFrench ? "Valeur par défaut" : "Default")</th>
+                    <th scope="col">@(IsFrench ? "Déclaré par" : "Declared by")</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var parameter in ApiParameters)
+                {
+                    <tr>
+                        <td><code>@parameter.Name</code></td>
+                        <td><code>@parameter.Type</code></td>
+                        <td>@(parameter.Required ? (IsFrench ? "Oui" : "Yes") : (IsFrench ? "Non" : "No"))</td>
+                        <td>@(parameter.Default ?? "—")</td>
+                        <td><code>@parameter.DeclaredBy</code></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (Descriptor.Events.Count > 0)
+    {
+        <GcdsHeading Tag="h2">@(IsFrench ? "Événements" : "Events")</GcdsHeading>
+        <GcdsText>
+            @(IsFrench ? "Les rappels Blazor pris en charge sont : " : "Supported Blazor callbacks are: ")
+            <code>@string.Join(", ", Descriptor.Events)</code>.
+        </GcdsText>
+    }
+
+    <GcdsHeading Tag="h2">@(IsFrench ? "Notes propres à la bibliothèque" : "Library notes")</GcdsHeading>
+    <GcdsText>@Descriptor.Notes.Get(Language)</GcdsText>
+    <ul>
+        <li>
+            <GcdsText>
+                @(IsFrench
+                    ? "AdditionalAttributes transmet les attributs HTML ou GCDS qui ne possèdent pas de paramètre typé."
+                    : "AdditionalAttributes forwards HTML or GCDS attributes without a typed parameter.")
+            </GcdsText>
+        </li>
+        <li>
+            <GcdsText>
+                @(Descriptor.IsAssetLoader
+                    ? (IsFrench ? "Rendez ce composant une seule fois à la racine; le chargement des ressources est idempotent." : "Render this component once at the root; asset loading is idempotent.")
+                    : (IsFrench ? "Les noms des types et paramètres C# restent en anglais dans les applications bilingues." : "C# type and parameter names remain unchanged in bilingual applications."))
+            </GcdsText>
+        </li>
+    </ul>
+
+    <GcdsText>
+        <GcdsLink Href="@Descriptor.OfficialUrlFor(Language)" External="true">
+            @(IsFrench ? "Consulter les directives officielles du Système de design GC" : "Read the official GC Design System guidance")
+        </GcdsLink>
+    </GcdsText>
+}
+
+@code {
+    [Parameter] public string Slug { get; set; } = string.Empty;
+
+    private DocsLanguage Language => DocsLanguageExtensions.FromPath(Navigation.ToBaseRelativePath(Navigation.Uri));
+    private bool IsFrench => Language == DocsLanguage.French;
+    private string SiteHref(string route) => Navigation.ToAbsoluteUri(route.TrimStart('/')).ToString();
+    private DocsComponentDescriptor? Descriptor => DocsCatalog.Find(Language, Slug);
+    private IReadOnlyList<DocsApiParameter> ApiParameters => Descriptor is null ? [] : DocsApiReader.Read(Descriptor);
+    private IDictionary<string, object> ExampleParameters => new Dictionary<string, object>
+    {
+        ["Language"] = Language
+    };
+}

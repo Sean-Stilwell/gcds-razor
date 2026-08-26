@@ -2,6 +2,16 @@
 
 Thin Blazor components backed by the official `@gcds-core/components` web components. The library does not reproduce GCDS markup or CSS.
 
+## Documentation site
+
+`GcdsWrapper.Demo` is the bilingual documentation site for the library. Run it locally with:
+
+```shell
+dotnet run --project GcdsWrapper.Demo/GcdsWrapper.Demo.csproj
+```
+
+Open `/en/components` or `/fr/composants`. Each wrapper page contains a live example, Razor usage, reflected parameter metadata, supported events, and a link to the corresponding official GCDS guidance. The GitHub Pages workflow publishes the static WebAssembly output on pushes to `main`.
+
 The library exposes a Blazor component for every custom element shipped by the pinned GCDS package, including supporting elements such as `GcdsBreadcrumbsItem`, `GcdsGridCol`, `GcdsNavGroup`, and `GcdsNavLink`. Component parameters use PascalCase and are emitted as their kebab-case GCDS attributes; for example, `CardTitleTag` maps to `card-title-tag`.
 
 ## Setup

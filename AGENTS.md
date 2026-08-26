@@ -11,6 +11,8 @@ Automated bUnit and xUnit tests live in `GcdsWrapper.Blazor.Tests/`.
 - `dotnet restore GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj` restores NuGet dependencies.
 - `dotnet build GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj` compiles the library and Razor components.
 - `dotnet build GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj -c Release` verifies release packaging inputs.
+- `dotnet run --project GcdsWrapper.Demo/GcdsWrapper.Demo.csproj` runs the bilingual WebAssembly documentation site.
+- `dotnet publish GcdsWrapper.Demo/GcdsWrapper.Demo.csproj -c Release` creates the GitHub Pages static output.
 - `dotnet test GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj` runs the component tests with Microsoft Testing Platform.
 - `dotnet format GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj --verify-no-changes` checks standard .NET formatting.
 

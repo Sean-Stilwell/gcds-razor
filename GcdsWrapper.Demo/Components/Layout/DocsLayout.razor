@@ -1,0 +1,34 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<GcdsHeader LangHref="@LanguageHref" SkipToHref="#main-content" />
+
+<GcdsContainer Size="xl" Alignment="center">
+    <GcdsGrid Columns="320px minmax(0, 1fr)">
+        <DocsSideNavigation Language="@Language" Current="@Current" />
+        <main id="main-content" class="docs-content">
+            @Body
+        </main>
+    </GcdsGrid>
+</GcdsContainer>
+
+<GcdsFooter Display="compact" />
+
+@code {
+    private DocsLanguage Language => DocsLanguageExtensions.FromPath(Navigation.ToBaseRelativePath(Navigation.Uri));
+    private DocsComponentDescriptor? Current => DocsCatalog.FindByPath(Navigation.ToBaseRelativePath(Navigation.Uri));
+    private string LanguageHref => Navigation.ToAbsoluteUri(
+        (Current?.RouteFor(OppositeLanguage) ?? OppositeLanguage.ComponentsRoute()).TrimStart('/')).ToString();
+    private DocsLanguage OppositeLanguage => Language == DocsLanguage.French ? DocsLanguage.English : DocsLanguage.French;
+
+    protected override void OnInitialized() => Navigation.LocationChanged += HandleLocationChanged;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) =>
+        await JS.InvokeVoidAsync("gcdsWrapperDocs.setLanguage", Language.Code());
+
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs args) => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Navigation.LocationChanged -= HandleLocationChanged;
+}
