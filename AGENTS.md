@@ -2,9 +2,9 @@
 
 ## Project Structure & Module Organization
 
-This repository contains one .NET 10 Razor class library under `GcdsWrapper.Blazor/`. Public wrapper components live as `Gcds*.razor` files at the project root; shared enums and version configuration are in `GcdsEnums.cs` and `GcdsVersion.cs`. Browser-facing static assets and JavaScript interop belong in `GcdsWrapper.Blazor/wwwroot/`. `RawGcdsDemo.razor` is a lightweight manual integration example. Build outputs in `bin/` and `obj/` are generated and must not be committed.
+This repository contains a .NET 10 Razor class library under `GcdsWrapper.Blazor/` and a minimal interactive host under `GcdsWrapper.Demo/`. Specialized form wrappers live in `Gcds*.razor`; attribute-oriented wrappers and their shared renderer are in `GcdsComponents.cs` and `GcdsComponentBase.cs`. Shared enums and version configuration are in `GcdsEnums.cs` and `GcdsVersion.cs`. Browser-facing JavaScript interop belongs in `GcdsWrapper.Blazor/wwwroot/`. `RawGcdsDemo.razor` is a lightweight manual integration example. Build outputs in `bin/` and `obj/` are generated and must not be committed.
 
-There is currently no automated test project. Add tests in a sibling project such as `GcdsWrapper.Blazor.Tests/`, and include a solution file if the repository grows beyond the single library.
+There is currently no automated test project. Add tests in a sibling project such as `GcdsWrapper.Blazor.Tests/`.
 
 ## Build, Test, and Development Commands
 

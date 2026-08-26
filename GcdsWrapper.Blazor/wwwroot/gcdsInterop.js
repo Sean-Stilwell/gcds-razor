@@ -43,3 +43,19 @@ export function listenMany(element, eventNames, dotNet) {
         dispose: () => registrations.forEach(([eventName, handler]) => element.removeEventListener(eventName, handler))
     };
 }
+
+export function listenEvents(element, eventNames, dotNet) {
+    const registrations = eventNames.map(eventName => {
+        const handler = event => dotNet.invokeMethodAsync(
+            "HandleGcdsEvent",
+            eventName,
+            event.detail === undefined ? null : JSON.stringify(event.detail));
+        element.addEventListener(eventName, handler);
+        return [eventName, handler];
+    });
+
+    return {
+        dispose: () => registrations.forEach(([eventName, handler]) =>
+            element.removeEventListener(eventName, handler))
+    };
+}
