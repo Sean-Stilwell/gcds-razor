@@ -26,10 +26,18 @@ Use `<RawGcdsDemo />` in a development route to verify that unwrapped GCDS eleme
         <option value="on">Ontario</option>
         <option value="qc">Quebec</option>
     </GcdsSelect>
+    <GcdsTextarea Id="summary" Name="summary" Label="Summary"
+                  Required @bind-Value="model.Summary" />
+    <GcdsRadios Name="contact" Legend="Preferred contact method"
+                Options="contactOptions" @bind-Value="model.ContactMethod" />
+    <GcdsCheckboxes Name="topics" Legend="Topics"
+                    Options="topicOptions" @bind-Value="model.Topics" />
+    <GcdsDateInput Name="start-date" Legend="Start date"
+                   @bind-Value="model.StartDate" />
 </EditForm>
 ```
 
-`GcdsInput` and `GcdsSelect` derive from Blazor's `InputBase<string?>`, so `@bind-Value`, `EditContext` field changes, data-annotation messages, and GCDS validation events work through one component API. Unmatched attributes pass through to the underlying custom element.
+`GcdsInput`, `GcdsSelect`, `GcdsTextarea`, `GcdsRadios`, `GcdsDateInput`, and `GcdsSearch` bind as `string?`. `GcdsCheckboxes` and `GcdsFileUploader` bind as `string[]?`. All derive from Blazor's `InputBase<TValue>`, so `@bind-Value`, `EditContext` field changes, data-annotation messages, and GCDS validation events work through one component API. Unmatched attributes pass through to the underlying custom element.
 
 ```razor
 <GcdsAlert Heading="Service update" AlertRole="info">

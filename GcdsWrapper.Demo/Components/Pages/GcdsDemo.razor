@@ -1,6 +1,7 @@
 @page "/gcds-demo"
 @rendermode InteractiveServer
 @using GcdsWrapper.Blazor
+@using System.ComponentModel.DataAnnotations
 
 <PageTitle>GCDS Demo</PageTitle>
 
@@ -8,4 +9,76 @@
 
 <p>This text should not be styled, but the below GCDS component should be styled with the GCDS styles.</p>
 
-<RawGcdsDemo />
+<!-- <RawGcdsDemo /> -->
+
+<GcdsAssets />
+
+<GcdsHeader LangHref="test" SkipToHref="#test" />
+
+<GcdsContainer Alignment="center" Size="xl">
+    <GcdsHeading Tag="h1">GCDS wrapper verification</GcdsHeading>
+    <GcdsText>This content is rendered by the GCDS wrapper components.</GcdsText>
+    <GcdsButton ButtonRole="Primary">GCDS wrapper button</GcdsButton>
+
+    <GcdsHeading Tag="h2">Blazor form integration</GcdsHeading>
+
+    <EditForm Model="model" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+
+        <GcdsInput Id="email" Name="email" Label="Email address" Required
+                Type="GcdsInputType.Email" @bind-Value="model.Email" />
+
+        <GcdsTextarea Id="summary" Name="summary" Label="Summary" Required
+                    @bind-Value="model.Summary" />
+
+        <GcdsRadios Name="contact-method" Legend="Preferred contact method"
+                    Options="contactOptions" @bind-Value="model.ContactMethod" />
+
+        <GcdsCheckboxes Name="topics" Legend="Topics"
+                        Options="topicOptions" @bind-Value="model.Topics" />
+
+        <GcdsDateInput Name="start-date" Legend="Start date"
+                    @bind-Value="model.StartDate" />
+
+        <GcdsButton Type="GcdsButtonType.Submit">Submit</GcdsButton>
+    </EditForm>
+
+    @if (submitted)
+    {
+        <GcdsNotice NoticeRole="success" NoticeTitle="Form submitted" NoticeTitleTag="h2">
+            <GcdsText>
+                All bound values passed validation.
+            </GcdsText>
+        </GcdsNotice>
+    }
+</GcdsContainer>
+
+<GcdsFooter />
+
+@code {
+    private readonly DemoModel model = new();
+    private bool submitted;
+
+    private readonly GcdsRadioOption[] contactOptions =
+    [
+        new("contact-email", "Email", "email"),
+        new("contact-phone", "Telephone", "phone")
+    ];
+
+    private readonly GcdsCheckboxOption[] topicOptions =
+    [
+        new("topic-benefits", "Benefits", "benefits"),
+        new("topic-taxes", "Taxes", "taxes")
+    ];
+
+    private void HandleSubmit() => submitted = true;
+
+    private sealed class DemoModel
+    {
+        [Required, EmailAddress] public string? Email { get; set; }
+        [Required] public string? Summary { get; set; }
+        public string? ContactMethod { get; set; }
+        public string[]? Topics { get; set; }
+        public string? StartDate { get; set; }
+    }
+}

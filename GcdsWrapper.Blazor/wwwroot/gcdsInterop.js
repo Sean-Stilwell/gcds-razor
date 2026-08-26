@@ -23,6 +23,17 @@ function detailValue(event) {
     return event.detail?.value ?? event.detail ?? event.target?.value ?? null;
 }
 
+function formValue(element, event) {
+    // Date input redispatches events from its internal day/month/year controls.
+    // Their event detail contains only the edited part; the host value contains
+    // the complete YYYY-MM-DD or YYYY-MM value assembled by the component.
+    if (element.tagName.toLowerCase() === "gcds-date-input") {
+        return element.value ?? null;
+    }
+
+    return detailValue(event);
+}
+
 export function listen(element, eventName, dotNet, methodName) {
     const handler = event => dotNet.invokeMethodAsync(methodName, detailValue(event));
     element.addEventListener(eventName, handler);
@@ -41,6 +52,22 @@ export function listenMany(element, eventNames, dotNet) {
 
     return {
         dispose: () => registrations.forEach(([eventName, handler]) => element.removeEventListener(eventName, handler))
+    };
+}
+
+export function listenFormEvents(element, eventNames, dotNet) {
+    const registrations = eventNames.map(eventName => {
+        const handler = event => dotNet.invokeMethodAsync(
+            "HandleGcdsFormEvent",
+            eventName,
+            JSON.stringify(formValue(element, event)));
+        element.addEventListener(eventName, handler);
+        return [eventName, handler];
+    });
+
+    return {
+        dispose: () => registrations.forEach(([eventName, handler]) =>
+            element.removeEventListener(eventName, handler))
     };
 }
 

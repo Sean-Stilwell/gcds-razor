@@ -4,14 +4,14 @@
 
 This repository contains a .NET 10 Razor class library under `GcdsWrapper.Blazor/` and a minimal interactive host under `GcdsWrapper.Demo/`. Specialized form wrappers live in `Gcds*.razor`; attribute-oriented wrappers and their shared renderer are in `GcdsComponents.cs` and `GcdsComponentBase.cs`. Shared enums and version configuration are in `GcdsEnums.cs` and `GcdsVersion.cs`. Browser-facing JavaScript interop belongs in `GcdsWrapper.Blazor/wwwroot/`. `RawGcdsDemo.razor` is a lightweight manual integration example. Build outputs in `bin/` and `obj/` are generated and must not be committed.
 
-There is currently no automated test project. Add tests in a sibling project such as `GcdsWrapper.Blazor.Tests/`.
+Automated bUnit and xUnit tests live in `GcdsWrapper.Blazor.Tests/`.
 
 ## Build, Test, and Development Commands
 
 - `dotnet restore GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj` restores NuGet dependencies.
 - `dotnet build GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj` compiles the library and Razor components.
 - `dotnet build GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj -c Release` verifies release packaging inputs.
-- `dotnet test` runs all test projects once tests are added.
+- `dotnet test GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj` runs the component tests with Microsoft Testing Platform.
 - `dotnet format GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj --verify-no-changes` checks standard .NET formatting.
 
 The library is not directly runnable. Exercise changes from a consuming Blazor app; render `GcdsAssets` once and use `RawGcdsDemo` to verify upstream GCDS assets.

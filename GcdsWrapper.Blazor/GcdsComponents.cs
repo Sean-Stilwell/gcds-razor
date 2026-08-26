@@ -39,24 +39,6 @@ public sealed class GcdsCard : GcdsComponentBase
     [Parameter] public string? Target { get; set; }
 }
 
-public sealed class GcdsCheckboxes : GcdsComponentBase
-{
-    protected override string TagName => "gcds-checkboxes";
-    [Parameter, EditorRequired] public string Name { get; set; } = default!;
-    [Parameter, EditorRequired] public string Legend { get; set; } = default!;
-    [Parameter, EditorRequired] public object Options { get; set; } = default!;
-    [Parameter] public bool? Autofocus { get; set; }
-    [Parameter] public bool? Disabled { get; set; }
-    [Parameter] public string? ErrorMessage { get; set; }
-    [Parameter] public string? Form { get; set; }
-    [Parameter] public bool? HideLabel { get; set; }
-    [Parameter] public bool? HideLegend { get; set; }
-    [Parameter] public string? Hint { get; set; }
-    [Parameter] public bool? Required { get; set; }
-    [Parameter] public string? ValidateOn { get; set; }
-    [Parameter] public object? Value { get; set; }
-}
-
 public sealed class GcdsContainer : GcdsComponentBase
 {
     protected override string TagName => "gcds-container";
@@ -67,24 +49,6 @@ public sealed class GcdsContainer : GcdsComponentBase
     [Parameter] public string? Padding { get; set; }
     [Parameter] public string? Size { get; set; }
     [Parameter] public string? Tag { get; set; }
-}
-
-public sealed class GcdsDateInput : GcdsComponentBase
-{
-    protected override string TagName => "gcds-date-input";
-    [Parameter, EditorRequired] public string Name { get; set; } = default!;
-    [Parameter, EditorRequired] public string Legend { get; set; } = default!;
-    [Parameter, EditorRequired] public string Format { get; set; } = default!;
-    [Parameter] public bool? Autofocus { get; set; }
-    [Parameter] public bool? Disabled { get; set; }
-    [Parameter] public string? ErrorMessage { get; set; }
-    [Parameter] public string? Form { get; set; }
-    [Parameter] public string? Hint { get; set; }
-    [Parameter] public string? Max { get; set; }
-    [Parameter] public string? Min { get; set; }
-    [Parameter] public bool? Required { get; set; }
-    [Parameter] public string? ValidateOn { get; set; }
-    [Parameter] public string? Value { get; set; }
 }
 
 public sealed class GcdsDateModified : GcdsComponentBase
@@ -120,25 +84,6 @@ public sealed class GcdsFieldset : GcdsComponentBase
     [Parameter, EditorRequired] public string Legend { get; set; } = default!;
     [Parameter, EditorRequired] public string LegendSize { get; set; } = default!;
     [Parameter] public string? Hint { get; set; }
-}
-
-public sealed class GcdsFileUploader : GcdsComponentBase
-{
-    protected override string TagName => "gcds-file-uploader";
-    [Parameter, EditorRequired] public string UploaderId { get; set; } = default!;
-    [Parameter, EditorRequired] public string Name { get; set; } = default!;
-    [Parameter, EditorRequired] public string Label { get; set; } = default!;
-    [Parameter] public string? Accept { get; set; }
-    [Parameter] public bool? Autofocus { get; set; }
-    [Parameter] public bool? Disabled { get; set; }
-    [Parameter] public string? ErrorMessage { get; set; }
-    [Parameter] public string? Form { get; set; }
-    [Parameter] public bool? HideLabel { get; set; }
-    [Parameter] public string? Hint { get; set; }
-    [Parameter] public bool? Multiple { get; set; }
-    [Parameter] public bool? Required { get; set; }
-    [Parameter] public string? ValidateOn { get; set; }
-    [Parameter] public string[]? Value { get; set; }
 }
 
 public sealed class GcdsFooter : GcdsComponentBase
@@ -281,35 +226,6 @@ public sealed class GcdsPagination : GcdsComponentBase
     [Parameter] public object? Url { get; set; }
 }
 
-public sealed class GcdsRadios : GcdsComponentBase
-{
-    protected override string TagName => "gcds-radios";
-    [Parameter, EditorRequired] public string Name { get; set; } = default!;
-    [Parameter, EditorRequired] public string Legend { get; set; } = default!;
-    [Parameter, EditorRequired] public object Options { get; set; } = default!;
-    [Parameter] public bool? Autofocus { get; set; }
-    [Parameter] public bool? Disabled { get; set; }
-    [Parameter] public string? ErrorMessage { get; set; }
-    [Parameter] public string? Form { get; set; }
-    [Parameter] public bool? HideLegend { get; set; }
-    [Parameter] public string? Hint { get; set; }
-    [Parameter] public bool? Required { get; set; }
-    [Parameter] public string? ValidateOn { get; set; }
-    [Parameter] public string? Value { get; set; }
-}
-
-public sealed class GcdsSearch : GcdsComponentBase
-{
-    protected override string TagName => "gcds-search";
-    [Parameter] public string? Action { get; set; }
-    [Parameter] public string? Method { get; set; }
-    [Parameter] public string? Name { get; set; }
-    [Parameter] public string? Placeholder { get; set; }
-    [Parameter] public string? SearchId { get; set; }
-    [Parameter] public object? Suggested { get; set; }
-    [Parameter] public string? Value { get; set; }
-}
-
 public sealed class GcdsSideNav : GcdsComponentBase
 {
     protected override string TagName => "gcds-side-nav";
@@ -361,28 +277,6 @@ public sealed class GcdsText : GcdsComponentBase
     [Parameter] public string? MarginTop { get; set; }
     [Parameter] public string? Size { get; set; }
     [Parameter] public string? TextRole { get; set; }
-}
-
-public sealed class GcdsTextarea : GcdsComponentBase
-{
-    protected override string TagName => "gcds-textarea";
-    [Parameter, EditorRequired] public string TextareaId { get; set; } = default!;
-    [Parameter, EditorRequired] public string Name { get; set; } = default!;
-    [Parameter, EditorRequired] public string Label { get; set; } = default!;
-    [Parameter] public bool? Autofocus { get; set; }
-    [Parameter] public int? Cols { get; set; }
-    [Parameter] public bool? Disabled { get; set; }
-    [Parameter] public string? ErrorMessage { get; set; }
-    [Parameter] public string? Form { get; set; }
-    [Parameter] public bool? HideLabel { get; set; }
-    [Parameter] public bool? HideLimit { get; set; }
-    [Parameter] public string? Hint { get; set; }
-    [Parameter] public int? Maxlength { get; set; }
-    [Parameter] public int? Minlength { get; set; }
-    [Parameter] public bool? Required { get; set; }
-    [Parameter] public int? Rows { get; set; }
-    [Parameter] public string? ValidateOn { get; set; }
-    [Parameter] public string? Value { get; set; }
 }
 
 public sealed class GcdsTopNav : GcdsComponentBase

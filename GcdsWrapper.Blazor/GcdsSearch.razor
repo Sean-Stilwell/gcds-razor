@@ -1,0 +1,17 @@
+@inherits GcdsFormInputBase<string?>
+
+<gcds-search @ref="Element" search-id="@Id" name="@Name" value="@CurrentValue"
+             action="@Action" method="@Method" placeholder="@Placeholder"
+             suggested="@GcdsJson.Serialize(Suggested)"
+             @attributes="AdditionalAttributes"></gcds-search>
+
+@code {
+    protected override string[] EventNames => [.. base.EventNames, "gcdsSubmit"];
+
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public string? Name { get; set; }
+    [Parameter] public string? Action { get; set; }
+    [Parameter] public string Method { get; set; } = "get";
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter] public object? Suggested { get; set; }
+}

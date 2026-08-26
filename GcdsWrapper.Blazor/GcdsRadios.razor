@@ -1,0 +1,20 @@
+@inherits GcdsFormInputBase<string?>
+
+<gcds-radios @ref="Element" name="@Name" legend="@Legend" options="@GcdsJson.Serialize(Options)"
+             value="@CurrentValue" hint="@Hint" error-message="@EffectiveErrorMessage"
+             required="@Required" disabled="@Disabled" autofocus="@Autofocus"
+             hide-legend="@HideLegend" form="@Form" validate-on="@ValidateOn.ToAttribute()"
+             @attributes="AdditionalAttributes"></gcds-radios>
+
+@code {
+    [Parameter, EditorRequired] public string Name { get; set; } = default!;
+    [Parameter, EditorRequired] public string Legend { get; set; } = default!;
+    [Parameter, EditorRequired] public object Options { get; set; } = default!;
+    [Parameter] public string? Hint { get; set; }
+    [Parameter] public string? Form { get; set; }
+    [Parameter] public bool Autofocus { get; set; }
+    [Parameter] public bool Required { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool HideLegend { get; set; }
+    [Parameter] public GcdsValidateOn ValidateOn { get; set; } = GcdsValidateOn.Blur;
+}
