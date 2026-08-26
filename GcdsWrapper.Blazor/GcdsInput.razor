@@ -1,0 +1,71 @@
+@inherits InputBase<string?>
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<gcds-input @ref="element" input-id="@Id" name="@Name" label="@Label" value="@CurrentValue"
+            type="@Type.ToAttribute()" inputmode="@InputMode?.ToAttribute()" hint="@Hint"
+            error-message="@EffectiveErrorMessage" required="@Required" disabled="@Disabled"
+            readonly="@ReadOnly" hide-label="@HideLabel" autocomplete="@Autocomplete"
+            minlength="@MinLength" maxlength="@MaxLength" pattern="@Pattern" size="@Size"
+            validate-on="@ValidateOn.ToAttribute()" @attributes="AdditionalAttributes"></gcds-input>
+
+@code {
+    private ElementReference element;
+    private IJSObjectReference? module;
+    private IJSObjectReference? subscription;
+    private DotNetObjectReference<GcdsInput>? reference;
+
+    [Parameter, EditorRequired] public string Id { get; set; } = default!;
+    [Parameter, EditorRequired] public string Name { get; set; } = default!;
+    [Parameter, EditorRequired] public string Label { get; set; } = default!;
+    [Parameter] public GcdsInputType Type { get; set; } = GcdsInputType.Text;
+    [Parameter] public GcdsInputMode? InputMode { get; set; }
+    [Parameter] public GcdsValidateOn ValidateOn { get; set; } = GcdsValidateOn.Blur;
+    [Parameter] public string? Hint { get; set; }
+    [Parameter] public string? ErrorMessage { get; set; }
+    [Parameter] public string? Autocomplete { get; set; }
+    [Parameter] public string? Pattern { get; set; }
+    [Parameter] public int? MinLength { get; set; }
+    [Parameter] public int? MaxLength { get; set; }
+    [Parameter] public int? Size { get; set; }
+    [Parameter] public bool Required { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public bool HideLabel { get; set; }
+    [Parameter] public EventCallback<string?> OnInput { get; set; }
+    [Parameter] public EventCallback OnValid { get; set; }
+    [Parameter] public EventCallback OnInvalid { get; set; }
+
+    private string? EffectiveErrorMessage => ErrorMessage ?? EditContext?.GetValidationMessages(FieldIdentifier).FirstOrDefault();
+
+    protected override bool TryParseValueFromString(string? value, out string? result, out string validationErrorMessage)
+    {
+        result = value;
+        validationErrorMessage = null!;
+        return true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/GcdsWrapper.Blazor/gcdsInterop.js");
+        reference = DotNetObjectReference.Create(this);
+        subscription = await module.InvokeAsync<IJSObjectReference>("listenMany", element, new[] { "gcdsInput", "gcdsChange", "gcdsValid", "gcdsError" }, reference);
+    }
+
+    [JSInvokable]
+    public async Task HandleGcdsEvent(string eventName, string? value)
+    {
+        if (eventName == "gcdsInput") await OnInput.InvokeAsync(value);
+        if (eventName == "gcdsChange") CurrentValueAsString = value;
+        if (eventName == "gcdsValid") await OnValid.InvokeAsync();
+        if (eventName == "gcdsError") await OnInvalid.InvokeAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (subscription is not null) await subscription.InvokeVoidAsync("dispose");
+        reference?.Dispose();
+        if (module is not null) await module.DisposeAsync();
+    }
+}

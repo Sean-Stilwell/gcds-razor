@@ -1,0 +1,18 @@
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+@code {
+    private IJSObjectReference? module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/GcdsWrapper.Blazor/gcdsInterop.js");
+        await module.InvokeVoidAsync("ensureAssets", GcdsVersion.CdnBase);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (module is not null) await module.DisposeAsync();
+    }
+}

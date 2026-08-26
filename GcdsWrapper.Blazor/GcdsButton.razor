@@ -1,0 +1,46 @@
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<gcds-button @ref="element" button-id="@Id" button-role="@Role.ToAttribute()"
+             size="@Size.ToAttribute()" type="@Type.ToAttribute()" disabled="@Disabled"
+             name="@Name" value="@Value" href="@Href" target="@Target" rel="@Rel"
+             download="@Download" @attributes="AdditionalAttributes">@ChildContent</gcds-button>
+
+@code {
+    private ElementReference element;
+    private IJSObjectReference? module;
+    private IJSObjectReference? subscription;
+    private DotNetObjectReference<GcdsButton>? reference;
+
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public GcdsButtonRole Role { get; set; } = GcdsButtonRole.Primary;
+    [Parameter] public GcdsButtonSize Size { get; set; } = GcdsButtonSize.Regular;
+    [Parameter] public GcdsButtonType Type { get; set; } = GcdsButtonType.Button;
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public string? Name { get; set; }
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public string? Href { get; set; }
+    [Parameter] public string? Target { get; set; }
+    [Parameter] public string? Rel { get; set; }
+    [Parameter] public bool Download { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || !OnClick.HasDelegate) return;
+        module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/GcdsWrapper.Blazor/gcdsInterop.js");
+        reference = DotNetObjectReference.Create(this);
+        subscription = await module.InvokeAsync<IJSObjectReference>("listen", element, "gcdsClick", reference, nameof(HandleClick));
+    }
+
+    [JSInvokable] public Task HandleClick(string? _) => OnClick.InvokeAsync();
+
+    public async ValueTask DisposeAsync()
+    {
+        if (subscription is not null) await subscription.InvokeVoidAsync("dispose");
+        reference?.Dispose();
+        if (module is not null) await module.DisposeAsync();
+    }
+}
