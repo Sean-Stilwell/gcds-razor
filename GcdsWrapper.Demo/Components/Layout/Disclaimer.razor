@@ -1,19 +1,21 @@
-<GcdsContainer Size="md" Alignment="center" class="disclaimer">
-    <GcdsNotice NoticeRole="warning" NoticeTitle="@(IsFrench ? "Pas un site web GC" : "Not a GC website")" NoticeTitleTag="h2">
-        <GcdsText>
-            @(IsFrench ? 
-                "Ce site Web n’est pas un site Web du gouvernement du Canada et n’est pas affilié au système de conception GC. " :
-                "This website is not a Government of Canada website and is not affiliated with the GC Design System. "
-            )
-            <GcdsLink Href="@(IsFrench ? "https://systeme-design.canada.ca/fr/" : "https://design-system.canada.ca/en/")">
-                @(IsFrench ? 
-                    "Cliquez ici pour accéder au Système de design GC" :
-                    "Click here for the GC Design System"
+<div class="disclaimer">
+    <GcdsContainer Size="md" Alignment="center">
+        <GcdsNotice NoticeRole="warning" NoticeTitle="@(IsFrench ? "Pas un site web GC" : "Not a GC website")" NoticeTitleTag="h2">
+            <GcdsText>
+                @(IsFrench ?
+                    "Ce site Web n’est pas un site Web du gouvernement du Canada et n’est pas affilié au système de conception GC. " :
+                    "This website is not a Government of Canada website and is not affiliated with the GC Design System. "
                 )
-            </GcdsLink>
-        </GcdsText>
-    </GcdsNotice>
-</GcdsContainer>
+                <GcdsLink Href="@(IsFrench ? "https://systeme-design.canada.ca/fr/" : "https://design-system.canada.ca/en/")">
+                    @(IsFrench ?
+                        "Cliquez ici pour accéder au Système de design GC" :
+                        "Click here for the GC Design System"
+                    )
+                </GcdsLink>
+            </GcdsText>
+        </GcdsNotice>
+    </GcdsContainer>
+</div>
 
 @code {
     [Parameter]

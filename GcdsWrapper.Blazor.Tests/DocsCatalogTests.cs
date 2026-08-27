@@ -4,6 +4,7 @@ using GcdsWrapper.Demo.Components.Layout;
 using GcdsWrapper.Demo.Components.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 using Xunit;
 
 namespace GcdsWrapper.Blazor.Tests;
@@ -91,6 +92,18 @@ public sealed class DocsCatalogTests
     }
 
     [Fact]
+    public void Disclaimer_AppliesIsolatedCssScopeToNativeRoot()
+    {
+        using var context = CreateContext();
+
+        var component = context.Render<Disclaimer>();
+        var root = component.Find("div.disclaimer");
+
+        Assert.Contains(root.Attributes, attribute => attribute.Name.StartsWith("b-", StringComparison.Ordinal));
+        Assert.NotNull(root.QuerySelector("gcds-container"));
+    }
+
+    [Fact]
     public void ComponentPage_RendersPreviewUsageApiBindingAndUpstreamLink()
     {
         using var context = CreateContext();
@@ -104,6 +117,80 @@ public sealed class DocsCatalogTests
         Assert.Contains("EditForm", component.Markup);
         Assert.Contains("AdditionalAttributes", component.Markup);
         Assert.Contains("https://design-system.canada.ca/en/components/input/", component.Markup);
+    }
+
+    [Fact]
+    public void NoticeExample_FormatsContentWithGcdsText()
+    {
+        using var context = CreateContext();
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo("en/components/notice");
+
+        var component = context.Render<ComponentReference>(parameters => parameters.Add(page => page.Slug, "notice"));
+        var text = component.Find(".docs-preview gcds-notice gcds-text");
+
+        Assert.Equal("Important information.", text.TextContent.Trim());
+        Assert.Contains("<GcdsText>Important information.</GcdsText>",
+            DocsCatalog.FindByKey("notice")!.SnippetEnglish);
+    }
+
+    [Theory]
+    [InlineData("container")]
+    [InlineData("details")]
+    [InlineData("grid")]
+    [InlineData("grid-col")]
+    [InlineData("label")]
+    public void ContentExamples_FormatTextWithGcdsText(string key)
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey(key)!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(DocsLanguage.English));
+
+        var component = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, descriptor.Slug.English));
+
+        Assert.NotEmpty(component.FindAll($".docs-preview gcds-{key} gcds-text"));
+        Assert.Contains("<GcdsText>", descriptor.SnippetEnglish);
+    }
+
+    [Fact]
+    public void TableExample_ProvidesRenderableColumnsRowsAndSampleCode()
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey("table")!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(DocsLanguage.English));
+
+        var component = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, descriptor.Slug.English));
+        var table = component.Find(".docs-preview gcds-table");
+        using var columns = JsonDocument.Parse(table.GetAttribute("columns")!);
+        using var rows = JsonDocument.Parse(table.GetAttribute("data")!);
+
+        Assert.Equal("name", columns.RootElement[0].GetProperty("field").GetString());
+        Assert.Equal("Name", columns.RootElement[0].GetProperty("header").GetString());
+        Assert.Equal(3, rows.RootElement.GetArrayLength());
+        Assert.Equal("Alice Martin", rows.RootElement[0].GetProperty("name").GetString());
+        Assert.Contains("private readonly object[] rows", descriptor.SnippetEnglish);
+        Assert.Contains("private readonly object[] lignes", descriptor.SnippetFrench);
+    }
+
+    [Fact]
+    public void StepperExample_ProvidesCurrentStepHeadingText()
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey("stepper")!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(DocsLanguage.English));
+
+        var component = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, descriptor.Slug.English));
+        var stepper = component.Find(".docs-preview gcds-stepper");
+
+        Assert.Equal("Review your application", stepper.TextContent.Trim());
+        Assert.Contains(">Review your application</GcdsStepper>", descriptor.SnippetEnglish);
+        Assert.Contains(">Vérifiez votre demande</GcdsStepper>", descriptor.SnippetFrench);
     }
 
     [Fact]

@@ -42,11 +42,11 @@ internal abstract class DocsExampleBase : ComponentBase
             "checkboxes" => New(("Name", "topics"), ("Legend", french ? "Sujets" : "Topics"),
                 ("Options", Options(french, true))),
             "container" => New(("Size", "md"), ("Padding", "300"),
-                ("ChildContent", Text(french ? "Contenu du conteneur" : "Container content"))),
+                ("ChildContent", FormattedText(french ? "Contenu du conteneur" : "Container content"))),
             "date-input" => New(("Name", "start-date"), ("Legend", french ? "Date de début" : "Start date")),
             "date-modified" => New(("ChildContent", Text("2026-08-26"))),
             "details" => New(("DetailsTitle", french ? "Renseignements supplémentaires" : "More information"),
-                ("ChildContent", Text(french ? "Détails utiles." : "Helpful details."))),
+                ("ChildContent", FormattedText(french ? "Détails utiles." : "Helpful details."))),
             "error-message" => New(("ChildContent", Text(french ? "Saisissez une valeur." : "Enter a value."))),
             "error-summary" => New(("ErrorLinks", new[] { new { href = "#name", label = french ? "Saisissez votre nom" : "Enter your name" } })),
             "fieldset" => New(("Legend", french ? "Coordonnées" : "Contact information"), ("LegendSize", "h2"),
@@ -55,21 +55,22 @@ internal abstract class DocsExampleBase : ComponentBase
                 ("Accept", ".pdf")),
             "footer" => New(("Display", "compact")),
             "grid" => New(("Columns", "1fr 1fr"), ("Gap", "300"), ("ChildContent", GridContent(french))),
-            "grid-col" => New(("Desktop", 6), ("ChildContent", Text(french ? "Colonne de grille" : "Grid column"))),
+            "grid-col" => New(("Desktop", 6), ("ChildContent", FormattedText(french ? "Colonne de grille" : "Grid column"))),
             "header" => New(("LangHref", french ? "en/components" : "fr/composants"), ("SkipToHref", "#main-content")),
             "heading" => New(("Tag", "h2"), ("ChildContent", Text(french ? "Titre de section" : "Section heading"))),
             "hint" => New(("ChildContent", Text(french ? "Contexte utile." : "Helpful context."))),
             "icon" => New(("Name", "info-circle"), ("Label", "Information"), ("Size", "h3")),
             "input" => New(("Id", "email"), ("Name", "email"), ("Label", french ? "Adresse courriel" : "Email address"),
                 ("Type", GcdsInputType.Email)),
-            "label" => New(("Label", french ? "Adresse courriel" : "Email address"), ("LabelFor", "email-preview")),
+            "label" => New(("Label", french ? "Adresse courriel" : "Email address"), ("LabelFor", "email-preview"),
+                ("ChildContent", FormattedText(french ? "Adresse courriel" : "Email address"))),
             "lang-toggle" => New(("Href", french ? "en/components" : "fr/composants")),
             "link" => New(("Href", "#preview"), ("ChildContent", Text(french ? "Lire le guide" : "Read the guide"))),
             "nav-group" => New(("MenuLabel", french ? "Guides" : "Guides"), ("OpenTrigger", french ? "Ouvrir les guides" : "Open guides"),
                 ("CloseTrigger", french ? "Fermer les guides" : "Close guides"), ("Open", true), ("ChildContent", NavLinks(french))),
             "nav-link" => New(("Href", "#preview"), ("Current", true), ("ChildContent", Text(french ? "Composants" : "Components"))),
             "notice" => New(("NoticeRole", "info"), ("NoticeTitle", french ? "Remarque" : "Note"), ("NoticeTitleTag", "h2"),
-                ("ChildContent", Text(french ? "Renseignements importants." : "Important information."))),
+                ("ChildContent", FormattedText(french ? "Renseignements importants." : "Important information."))),
             "pagination" => New(("Label", french ? "Résultats" : "Results"), ("Display", "simple"),
                 ("PreviousHref", "#previous"), ("NextHref", "#next")),
             "radios" => New(("Name", "contact"), ("Legend", french ? "Mode de communication" : "Contact method"),
@@ -80,9 +81,20 @@ internal abstract class DocsExampleBase : ComponentBase
             "side-nav" => New(("Label", french ? "Documentation" : "Documentation"), ("ChildContent", NavLinks(french))),
             "signature" => New(("Type", "signature"), ("Variant", "colour"), ("HasLink", false)),
             "sr-only" => New(("ChildContent", Text(french ? "Contexte supplémentaire" : "Additional context"))),
-            "stepper" => New(("CurrentStep", 2), ("TotalSteps", 4), ("Tag", "h2")),
-            "table" => New(("Columns", new[] { new { key = "name", title = french ? "Nom" : "Name" }, new { key = "status", title = "Status" } }),
-                ("Data", new[] { new { name = french ? "Exemple" : "Example", status = french ? "Actif" : "Active" } }), ("Sort", true)),
+            "stepper" => New(("CurrentStep", 2), ("TotalSteps", 4), ("Tag", "h2"),
+                ("ChildContent", Text(french ? "Vérifiez votre demande" : "Review your application"))),
+            "table" => New(("Columns", new[]
+                {
+                    new { field = "name", header = french ? "Nom" : "Name", rowHeader = true },
+                    new { field = "status", header = french ? "Statut" : "Status", rowHeader = false }
+                }),
+                ("Data", new[]
+                {
+                    new { name = "Alice Martin", status = french ? "Actif" : "Active" },
+                    new { name = "Benoît Roy", status = french ? "En attente" : "Pending" },
+                    new { name = "Chen Li", status = french ? "Terminé" : "Complete" }
+                }),
+                ("Sort", true)),
             "text" => New(("ChildContent", Text(french ? "Corps du texte." : "Body text."))),
             "textarea" => New(("Id", "summary"), ("Name", "summary"), ("Label", french ? "Résumé" : "Summary"), ("Rows", 4)),
             "top-nav" => New(("Label", french ? "Navigation principale" : "Main navigation"), ("ChildContent", NavLinks(french))),
@@ -123,6 +135,13 @@ internal abstract class DocsExampleBase : ComponentBase
 
     private static RenderFragment Text(string value) => builder => builder.AddContent(0, value);
 
+    private static RenderFragment FormattedText(string value) => builder =>
+    {
+        builder.OpenComponent<GcdsText>(0);
+        builder.AddAttribute(1, nameof(GcdsComponentBase.ChildContent), Text(value));
+        builder.CloseComponent();
+    };
+
     private static RenderFragment Breadcrumbs(bool french) => builder =>
     {
         builder.OpenComponent<GcdsBreadcrumbsItem>(0);
@@ -141,12 +160,12 @@ internal abstract class DocsExampleBase : ComponentBase
 
     private static RenderFragment GridContent(bool french) => builder =>
     {
-        builder.OpenElement(0, "div");
-        builder.AddContent(1, french ? "Première colonne" : "First column");
-        builder.CloseElement();
-        builder.OpenElement(2, "div");
-        builder.AddContent(3, french ? "Deuxième colonne" : "Second column");
-        builder.CloseElement();
+        builder.OpenComponent<GcdsText>(0);
+        builder.AddAttribute(1, nameof(GcdsComponentBase.ChildContent), Text(french ? "Première colonne" : "First column"));
+        builder.CloseComponent();
+        builder.OpenComponent<GcdsText>(2);
+        builder.AddAttribute(3, nameof(GcdsComponentBase.ChildContent), Text(french ? "Deuxième colonne" : "Second column"));
+        builder.CloseComponent();
     };
 
     private static RenderFragment SelectOptions() => builder =>

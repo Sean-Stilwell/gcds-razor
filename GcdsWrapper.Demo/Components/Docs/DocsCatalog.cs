@@ -9,6 +9,42 @@ namespace GcdsWrapper.Demo.Components.Docs;
 internal static class DocsCatalog
 {
     private static readonly string[] FormEvents = ["OnInput", "OnChange", "OnValid", "OnInvalid", "OnFocus", "OnBlur"];
+    private const string TableSnippetEnglish = """
+        <GcdsTable Columns="@columns" Data="@rows" Sort />
+
+        @code {
+            private readonly object[] columns =
+            [
+                new { field = "name", header = "Name", rowHeader = true },
+                new { field = "status", header = "Status", rowHeader = false }
+            ];
+
+            private readonly object[] rows =
+            [
+                new { name = "Alice Martin", status = "Active" },
+                new { name = "Benoît Roy", status = "Pending" },
+                new { name = "Chen Li", status = "Complete" }
+            ];
+        }
+        """;
+    private const string TableSnippetFrench = """
+        <GcdsTable Columns="@colonnes" Data="@lignes" Sort />
+
+        @code {
+            private readonly object[] colonnes =
+            [
+                new { field = "name", header = "Nom", rowHeader = true },
+                new { field = "status", header = "Statut", rowHeader = false }
+            ];
+
+            private readonly object[] lignes =
+            [
+                new { name = "Alice Martin", status = "Actif" },
+                new { name = "Benoît Roy", status = "En attente" },
+                new { name = "Chen Li", status = "Terminé" }
+            ];
+        }
+        """;
 
     public static readonly IReadOnlyList<DocsComponentDescriptor> All =
     [
@@ -27,13 +63,13 @@ internal static class DocsCatalog
         D<GcdsCheckboxes, GcdsCheckboxesExample>("checkboxes", "Checkboxes", "Cases à cocher", "checkboxes", "cases-cocher", DocsCategory.Forms,
             "checkboxes", "cases-cocher", "<GcdsCheckboxes Name=\"topics\" Legend=\"Topics\" Options=\"options\" @bind-Value=\"model.Topics\" />", "<GcdsCheckboxes Name=\"sujets\" Legend=\"Sujets\" Options=\"options\" @bind-Value=\"model.Sujets\" />", FormEvents, bind: true),
         D<GcdsContainer, GcdsContainerExample>("container", "Container", "Conteneur", "container", "conteneur", DocsCategory.Layout,
-            "container", "conteneur", "<GcdsContainer Size=\"md\">Content</GcdsContainer>", "<GcdsContainer Size=\"md\">Contenu</GcdsContainer>", []),
+            "container", "conteneur", "<GcdsContainer Size=\"md\"><GcdsText>Container content</GcdsText></GcdsContainer>", "<GcdsContainer Size=\"md\"><GcdsText>Contenu du conteneur</GcdsText></GcdsContainer>", []),
         D<GcdsDateInput, GcdsDateInputExample>("date-input", "Date input", "Champ de date", "date-input", "champ-date", DocsCategory.Forms,
             "date-input", "champ-date", "<GcdsDateInput Name=\"date\" Legend=\"Start date\" @bind-Value=\"model.Date\" />", "<GcdsDateInput Name=\"date\" Legend=\"Date de début\" @bind-Value=\"model.Date\" />", FormEvents, bind: true),
         D<GcdsDateModified, GcdsDateModifiedExample>("date-modified", "Date modified", "Date de modification", "date-modified", "date-modification", DocsCategory.Data,
             "date-modified", "date-modification", "<GcdsDateModified>2026-08-26</GcdsDateModified>", "<GcdsDateModified>2026-08-26</GcdsDateModified>", []),
         D<GcdsDetails, GcdsDetailsExample>("details", "Details", "Détails", "details", "details", DocsCategory.Layout,
-            "details", "details", "<GcdsDetails DetailsTitle=\"More information\">Details</GcdsDetails>", "<GcdsDetails DetailsTitle=\"Renseignements supplémentaires\">Détails</GcdsDetails>", ["OnClick", "OnFocus", "OnBlur"]),
+            "details", "details", "<GcdsDetails DetailsTitle=\"More information\"><GcdsText>Helpful details.</GcdsText></GcdsDetails>", "<GcdsDetails DetailsTitle=\"Renseignements supplémentaires\"><GcdsText>Détails utiles.</GcdsText></GcdsDetails>", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsErrorMessage, GcdsErrorMessageExample>("error-message", "Error message", "Message d’erreur", "error-message", "message-erreur", DocsCategory.Feedback,
             "error-message", "message-erreur", "<GcdsErrorMessage>Enter a value.</GcdsErrorMessage>", "<GcdsErrorMessage>Saisissez une valeur.</GcdsErrorMessage>", []),
         D<GcdsErrorSummary, GcdsErrorSummaryExample>("error-summary", "Error summary", "Sommaire des erreurs", "error-summary", "sommaire-erreurs", DocsCategory.Feedback,
@@ -45,9 +81,9 @@ internal static class DocsCatalog
         D<GcdsFooter, GcdsFooterExample>("footer", "Footer", "Pied de page", "footer", "pied-page", DocsCategory.Branding,
             "footer", "pied-page", "<GcdsFooter Display=\"compact\" />", "<GcdsFooter Display=\"compact\" />", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsGrid, GcdsGridExample>("grid", "Grid", "Grille", "grid", "grille", DocsCategory.Layout,
-            "grid", "grille", "<GcdsGrid Columns=\"1fr 1fr\">...</GcdsGrid>", "<GcdsGrid Columns=\"1fr 1fr\">...</GcdsGrid>", []),
+            "grid", "grille", "<GcdsGrid Columns=\"1fr 1fr\"><GcdsText>First column</GcdsText><GcdsText>Second column</GcdsText></GcdsGrid>", "<GcdsGrid Columns=\"1fr 1fr\"><GcdsText>Première colonne</GcdsText><GcdsText>Deuxième colonne</GcdsText></GcdsGrid>", []),
         D<GcdsGridCol, GcdsGridColExample>("grid-col", "Grid column", "Colonne de grille", "grid-col", "colonne-grille", DocsCategory.Supporting,
-            "grid", "grille", "<GcdsGridCol Desktop=\"6\">Content</GcdsGridCol>", "<GcdsGridCol Desktop=\"6\">Contenu</GcdsGridCol>", []),
+            "grid", "grille", "<GcdsGridCol Desktop=\"6\"><GcdsText>Grid column</GcdsText></GcdsGridCol>", "<GcdsGridCol Desktop=\"6\"><GcdsText>Colonne de grille</GcdsText></GcdsGridCol>", []),
         D<GcdsHeader, GcdsHeaderExample>("header", "Header", "En-tête", "header", "en-tete", DocsCategory.Branding,
             "header", "en-tete", "<GcdsHeader LangHref=\"/fr\" SkipToHref=\"#main\" />", "<GcdsHeader LangHref=\"/en\" SkipToHref=\"#main\" />", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsHeading, GcdsHeadingExample>("heading", "Heading", "Titre", "heading", "titre", DocsCategory.Layout,
@@ -59,7 +95,7 @@ internal static class DocsCatalog
         D<GcdsInput, GcdsInputExample>("input", "Input", "Champ de saisie", "input", "champ-saisie", DocsCategory.Forms,
             "input", "champ-saisie", "<GcdsInput Id=\"email\" Name=\"email\" Label=\"Email address\" @bind-Value=\"model.Email\" />", "<GcdsInput Id=\"courriel\" Name=\"courriel\" Label=\"Adresse courriel\" @bind-Value=\"model.Courriel\" />", [.. FormEvents, "OnSuggestionSelected"], bind: true),
         D<GcdsLabel, GcdsLabelExample>("label", "Label", "Étiquette", "label", "etiquette", DocsCategory.Supporting,
-            "input", "champ-saisie", "<GcdsLabel Label=\"Email address\" LabelFor=\"email\" />", "<GcdsLabel Label=\"Adresse courriel\" LabelFor=\"courriel\" />", []),
+            "input", "champ-saisie", "<GcdsLabel Label=\"Email address\" LabelFor=\"email\"><GcdsText>Email address</GcdsText></GcdsLabel>", "<GcdsLabel Label=\"Adresse courriel\" LabelFor=\"courriel\"><GcdsText>Adresse courriel</GcdsText></GcdsLabel>", []),
         D<GcdsLangToggle, GcdsLangToggleExample>("lang-toggle", "Language toggle", "Bascule de langue", "language-toggle", "bascule-langue", DocsCategory.Navigation,
             "language-toggle", "bascule-langue", "<GcdsLangToggle Href=\"/fr\" Lang=\"/fr\" />", "<GcdsLangToggle Href=\"/en\" Lang=\"/en\" />", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsLink, GcdsLinkExample>("link", "Link", "Lien", "link", "lien", DocsCategory.Navigation,
@@ -69,7 +105,7 @@ internal static class DocsCatalog
         D<GcdsNavLink, GcdsNavLinkExample>("nav-link", "Navigation link", "Lien de navigation", "nav-link", "lien-navigation", DocsCategory.Supporting,
             "side-navigation", "navigation-laterale", "<GcdsNavLink Href=\"/components\">Components</GcdsNavLink>", "<GcdsNavLink Href=\"/composants\">Composants</GcdsNavLink>", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsNotice, GcdsNoticeExample>("notice", "Notice", "Avis", "notice", "avis", DocsCategory.Feedback,
-            "notice", "avis", "<GcdsNotice NoticeRole=\"info\" NoticeTitle=\"Note\" NoticeTitleTag=\"h2\">...</GcdsNotice>", "<GcdsNotice NoticeRole=\"info\" NoticeTitle=\"Remarque\" NoticeTitleTag=\"h2\">...</GcdsNotice>", []),
+            "notice", "avis", "<GcdsNotice NoticeRole=\"info\" NoticeTitle=\"Note\" NoticeTitleTag=\"h2\"><GcdsText>Important information.</GcdsText></GcdsNotice>", "<GcdsNotice NoticeRole=\"info\" NoticeTitle=\"Remarque\" NoticeTitleTag=\"h2\"><GcdsText>Renseignements importants.</GcdsText></GcdsNotice>", []),
         D<GcdsPagination, GcdsPaginationExample>("pagination", "Pagination", "Pagination", "pagination", "pagination", DocsCategory.Navigation,
             "pagination", "pagination", "<GcdsPagination Label=\"Results\" CurrentPage=\"2\" TotalPages=\"5\" Url=\"/results?page={}\" />", "<GcdsPagination Label=\"Résultats\" CurrentPage=\"2\" TotalPages=\"5\" Url=\"/resultats?page={}\" />", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsRadios, GcdsRadiosExample>("radios", "Radios", "Boutons radio", "radios", "boutons-radio", DocsCategory.Forms,
@@ -85,9 +121,9 @@ internal static class DocsCatalog
         D<GcdsSrOnly, GcdsSrOnlyExample>("sr-only", "Screenreader-only", "Lecteur d’écran seulement", "screenreader-only", "lecteur-ecran-seulement", DocsCategory.Supporting,
             "screenreader-only", "lecteur-ecran-seulement", "<GcdsSrOnly>Additional context</GcdsSrOnly>", "<GcdsSrOnly>Contexte supplémentaire</GcdsSrOnly>", []),
         D<GcdsStepper, GcdsStepperExample>("stepper", "Stepper", "Indicateur d’étapes", "stepper", "indicateur-etapes", DocsCategory.Data,
-            "stepper", "indicateur-etapes", "<GcdsStepper CurrentStep=\"2\" TotalSteps=\"4\" />", "<GcdsStepper CurrentStep=\"2\" TotalSteps=\"4\" />", []),
+            "stepper", "indicateur-etapes", "<GcdsStepper CurrentStep=\"2\" TotalSteps=\"4\">Review your application</GcdsStepper>", "<GcdsStepper CurrentStep=\"2\" TotalSteps=\"4\">Vérifiez votre demande</GcdsStepper>", []),
         D<GcdsTable, GcdsTableExample>("table", "Table", "Tableau", "table", "tableau", DocsCategory.Data,
-            "table", "tableau", "<GcdsTable Columns=\"columns\" Data=\"rows\" Sort />", "<GcdsTable Columns=\"colonnes\" Data=\"lignes\" Sort />", ["OnTableStateChange"]),
+            "table", "tableau", TableSnippetEnglish, TableSnippetFrench, ["OnTableStateChange"]),
         D<GcdsText, GcdsTextExample>("text", "Text", "Texte", "text", "texte", DocsCategory.Layout,
             "text", "texte", "<GcdsText>Body text.</GcdsText>", "<GcdsText>Corps du texte.</GcdsText>", []),
         D<GcdsTextarea, GcdsTextareaExample>("textarea", "Textarea", "Zone de texte", "textarea", "zone-texte", DocsCategory.Forms,
