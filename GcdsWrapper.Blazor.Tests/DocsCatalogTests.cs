@@ -237,6 +237,54 @@ public sealed class DocsCatalogTests
     }
 
     [Fact]
+    public void ChoiceAndFileExamples_UseValidInitialAttributes()
+    {
+        using var context = CreateContext();
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+
+        var checkboxesDescriptor = DocsCatalog.FindByKey("checkboxes")!;
+        navigation.NavigateTo(checkboxesDescriptor.RouteFor(DocsLanguage.English));
+        var checkboxesPage = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, checkboxesDescriptor.Slug.English));
+        var checkboxes = checkboxesPage.Find(".docs-preview gcds-checkboxes");
+        using var checkboxOptions = JsonDocument.Parse(checkboxes.GetAttribute("options")!);
+
+        Assert.Equal(["topics-email", "topics-phone"],
+            checkboxOptions.RootElement.EnumerateArray().Select(option => option.GetProperty("id").GetString()));
+        Assert.All(checkboxOptions.RootElement.EnumerateArray(), option =>
+        {
+            Assert.False(option.TryGetProperty("hint", out _));
+            Assert.False(option.TryGetProperty("checked", out _));
+        });
+        Assert.Equal("[\"email\"]", checkboxes.GetAttribute("value"));
+
+        var radiosDescriptor = DocsCatalog.FindByKey("radios")!;
+        navigation.NavigateTo(radiosDescriptor.RouteFor(DocsLanguage.English));
+        var radiosPage = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, radiosDescriptor.Slug.English));
+        var radios = radiosPage.Find(".docs-preview gcds-radios");
+        using var radioOptions = JsonDocument.Parse(radios.GetAttribute("options")!);
+
+        Assert.Equal(["contact-email", "contact-phone"],
+            radioOptions.RootElement.EnumerateArray().Select(option => option.GetProperty("id").GetString()));
+        Assert.All(radioOptions.RootElement.EnumerateArray(), option =>
+        {
+            Assert.False(option.TryGetProperty("hint", out _));
+            Assert.False(option.TryGetProperty("checked", out _));
+        });
+        Assert.Equal("email", radios.GetAttribute("value"));
+
+        var uploaderDescriptor = DocsCatalog.FindByKey("file-uploader")!;
+        navigation.NavigateTo(uploaderDescriptor.RouteFor(DocsLanguage.English));
+        var uploaderPage = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, uploaderDescriptor.Slug.English));
+        var uploader = uploaderPage.Find(".docs-preview gcds-file-uploader");
+
+        Assert.Equal("documents", uploader.GetAttribute("uploader-id"));
+        Assert.Null(uploader.GetAttribute("value"));
+    }
+
+    [Fact]
     public void RootRoute_SelectsFrenchFromBrowserPreference()
     {
         using var context = CreateContext();

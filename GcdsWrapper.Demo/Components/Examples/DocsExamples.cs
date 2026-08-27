@@ -9,7 +9,8 @@ namespace GcdsWrapper.Demo.Components.Examples;
 internal abstract class DocsExampleBase : ComponentBase
 {
     private string? textValue = "example";
-    private string[]? values = ["email"];
+    private string[]? checkboxValues = ["email"];
+    private string[]? uploadedFiles;
 
     [Parameter] public DocsLanguage Language { get; set; }
 
@@ -40,7 +41,7 @@ internal abstract class DocsExampleBase : ComponentBase
             "card" => New(("CardTitle", french ? "Guide de demande" : "Application guide"), ("Href", "#preview"),
                 ("Description", french ? "Un exemple de carte Blazor." : "An example Blazor card.")),
             "checkboxes" => New(("Name", "topics"), ("Legend", french ? "Sujets" : "Topics"),
-                ("Options", Options(french, true))),
+                ("Options", CheckboxOptions(french))),
             "container" => New(("Size", "md"), ("Padding", "300"),
                 ("ChildContent", FormattedText(french ? "Contenu du conteneur" : "Container content"))),
             "date-input" => New(("Name", "start-date"), ("Legend", french ? "Date de début" : "Start date")),
@@ -74,7 +75,7 @@ internal abstract class DocsExampleBase : ComponentBase
             "pagination" => New(("Label", french ? "Résultats" : "Results"), ("Display", "simple"),
                 ("PreviousHref", "#previous"), ("NextHref", "#next")),
             "radios" => New(("Name", "contact"), ("Legend", french ? "Mode de communication" : "Contact method"),
-                ("Options", Options(french, false))),
+                ("Options", RadioOptions(french))),
             "search" => New(("Id", "site-search"), ("Name", "q"), ("Placeholder", french ? "Rechercher" : "Search")),
             "select" => New(("Id", "province"), ("Name", "province"), ("Label", "Province"),
                 ("DefaultValue", french ? "Sélectionnez une province" : "Select a province"), ("ChildContent", SelectOptions(french))),
@@ -102,14 +103,21 @@ internal abstract class DocsExampleBase : ComponentBase
             _ => throw new InvalidOperationException($"No parameters are defined for '{Key}'.")
         };
 
-        if (Key is "checkboxes" or "file-uploader")
+        if (Key == "checkboxes")
         {
-            parameters["Value"] = values!;
-            parameters["ValueChanged"] = EventCallback.Factory.Create<string[]?>(this, value => values = value);
-            parameters["ValueExpression"] = (Expression<Func<string[]?>>)(() => values);
+            parameters["Value"] = checkboxValues!;
+            parameters["ValueChanged"] = EventCallback.Factory.Create<string[]?>(this, value => checkboxValues = value);
+            parameters["ValueExpression"] = (Expression<Func<string[]?>>)(() => checkboxValues);
+        }
+        else if (Key == "file-uploader")
+        {
+            parameters["Value"] = uploadedFiles!;
+            parameters["ValueChanged"] = EventCallback.Factory.Create<string[]?>(this, value => uploadedFiles = value);
+            parameters["ValueExpression"] = (Expression<Func<string[]?>>)(() => uploadedFiles);
         }
         else if (DocsCatalog.FindByKey(Key)?.SupportsBinding == true)
         {
+            if (Key == "radios" && textValue == "example") textValue = "email";
             parameters["Value"] = textValue!;
             parameters["ValueChanged"] = EventCallback.Factory.Create<string?>(this, value => textValue = value);
             parameters["ValueExpression"] = (Expression<Func<string?>>)(() => textValue);
@@ -121,17 +129,17 @@ internal abstract class DocsExampleBase : ComponentBase
     private static Dictionary<string, object> New(params (string Name, object Value)[] values) =>
         values.ToDictionary(item => item.Name, item => item.Value);
 
-    private static object Options(bool french, bool multiple) => multiple
-        ? new[]
-        {
-            new { label = french ? "Courriel" : "Email", value = "email" },
-            new { label = french ? "Téléphone" : "Telephone", value = "phone" }
-        }
-        : new[]
-        {
-            new { label = french ? "Courriel" : "Email", value = "email" },
-            new { label = french ? "Téléphone" : "Telephone", value = "phone" }
-        };
+    private static GcdsCheckboxOption[] CheckboxOptions(bool french) =>
+    [
+        new("topics-email", french ? "Courriel" : "Email", "email"),
+        new("topics-phone", french ? "Téléphone" : "Telephone", "phone")
+    ];
+
+    private static GcdsRadioOption[] RadioOptions(bool french) =>
+    [
+        new("contact-email", french ? "Courriel" : "Email", "email"),
+        new("contact-phone", french ? "Téléphone" : "Telephone", "phone")
+    ];
 
     private static RenderFragment Text(string value) => builder => builder.AddContent(0, value);
 
