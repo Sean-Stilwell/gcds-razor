@@ -98,7 +98,7 @@ internal abstract class DocsExampleBase : ComponentBase
             "text" => New(("ChildContent", Text(french ? "Corps du texte." : "Body text."))),
             "textarea" => New(("Id", "summary"), ("Name", "summary"), ("Label", french ? "Résumé" : "Summary"), ("Rows", 4)),
             "top-nav" => New(("Label", french ? "Navigation principale" : "Main navigation"), ("ChildContent", NavLinks(french))),
-            "topic-menu" => New(("Home", true)),
+            "topic-menu" => New(("Lang", french ? "fr" : "en"), ("Home", true)),
             _ => throw new InvalidOperationException($"No parameters are defined for '{Key}'.")
         };
 

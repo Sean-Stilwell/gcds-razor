@@ -131,7 +131,7 @@ internal static class DocsCatalog
         D<GcdsTopNav, GcdsTopNavExample>("top-nav", "Top navigation", "Navigation supérieure", "top-navigation", "navigation-superieure", DocsCategory.Navigation,
             "top-navigation", "navigation-superieure", "<GcdsTopNav Label=\"Main navigation\">...</GcdsTopNav>", "<GcdsTopNav Label=\"Navigation principale\">...</GcdsTopNav>", []),
         D<GcdsTopicMenu, GcdsTopicMenuExample>("topic-menu", "Theme and topic menu", "Menu des thèmes et sujets", "theme-topic-menu", "menu-themes-sujets", DocsCategory.Navigation,
-            "theme-topic-menu", "menu-themes-sujets", "<GcdsTopicMenu Home />", "<GcdsTopicMenu Home />", [])
+            "theme-topic-menu", "menu-themes-sujets", "<GcdsTopicMenu Lang=\"en\" Home />", "<GcdsTopicMenu Lang=\"fr\" Home />", [])
     ];
 
     public static DocsComponentDescriptor? Find(DocsLanguage language, string slug) =>

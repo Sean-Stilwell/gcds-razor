@@ -290,5 +290,6 @@ public sealed class GcdsTopNav : GcdsComponentBase
 public sealed class GcdsTopicMenu : GcdsComponentBase
 {
     protected override string TagName => "gcds-topic-menu";
+    [Parameter, EditorRequired] public string Lang { get; set; } = default!;
     [Parameter] public bool? Home { get; set; }
 }
