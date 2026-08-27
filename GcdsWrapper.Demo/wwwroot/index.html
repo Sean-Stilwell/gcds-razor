@@ -17,6 +17,37 @@
         <a href="." class="reload">Reload / Recharger</a>
     </div>
     <script src="docsInterop.js"></script>
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+        Blazor.start({
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                if (type === "dotnetjs") {
+                    return null;
+                }
+
+                return fetch(defaultUri, {
+                    cache: "force-cache",
+                    integrity: integrity
+                }).then(
+                    function (response) {
+                        if (response.ok) {
+                            return response;
+                        }
+
+                        return fetch(defaultUri, {
+                            cache: "reload",
+                            integrity: integrity
+                        });
+                    },
+                    function () {
+                        return fetch(defaultUri, {
+                            cache: "reload",
+                            integrity: integrity
+                        });
+                    }
+                );
+            }
+        });
+    </script>
 </body>
 </html>
