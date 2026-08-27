@@ -20,28 +20,32 @@
     <script src="_framework/blazor.webassembly.js" autostart="false"></script>
     <script>
         Blazor.start({
-            loadBootResource: async function (type, name, defaultUri, integrity) {
+            loadBootResource: function (type, name, defaultUri, integrity) {
                 if (type === "dotnetjs") {
                     return null;
                 }
 
-                try {
-                    const cachedResponse = await fetch(defaultUri, {
-                        cache: "force-cache",
-                        integrity: integrity
-                    });
-
-                    if (cachedResponse.ok) {
-                        return cachedResponse;
-                    }
-                } catch {
-                    // Retry from the origin when a cached response fails integrity.
-                }
-
                 return fetch(defaultUri, {
-                    cache: "reload",
+                    cache: "force-cache",
                     integrity: integrity
-                });
+                }).then(
+                    function (response) {
+                        if (response.ok) {
+                            return response;
+                        }
+
+                        return fetch(defaultUri, {
+                            cache: "reload",
+                            integrity: integrity
+                        });
+                    },
+                    function () {
+                        return fetch(defaultUri, {
+                            cache: "reload",
+                            integrity: integrity
+                        });
+                    }
+                );
             }
         });
     </script>
