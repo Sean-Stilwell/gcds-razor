@@ -193,6 +193,49 @@ public sealed class DocsCatalogTests
         Assert.Contains(">Vérifiez votre demande</GcdsStepper>", descriptor.SnippetFrench);
     }
 
+    [Theory]
+    [InlineData(DocsLanguage.English, "en")]
+    [InlineData(DocsLanguage.French, "fr")]
+    public void TopicMenuExample_UsesPageLanguage(DocsLanguage language, string expected)
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey("topic-menu")!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(language));
+
+        var component = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, descriptor.SlugFor(language)));
+
+        Assert.Equal(expected,
+            component.Find(".docs-preview gcds-topic-menu").GetAttribute("lang"));
+        Assert.Contains($"Lang=\"{expected}\"", descriptor.SnippetFor(language));
+    }
+
+    [Theory]
+    [InlineData(DocsLanguage.English, "British Columbia", "Quebec")]
+    [InlineData(DocsLanguage.French, "Colombie-Britannique", "Québec")]
+    public void SelectExample_ListsAllProvincesAndTerritories(
+        DocsLanguage language,
+        string expectedBritishColumbia,
+        string expectedQuebec)
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey("select")!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(language));
+
+        var component = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, descriptor.SlugFor(language)));
+        var options = component.FindAll(".docs-preview gcds-select option");
+
+        Assert.Equal(13, options.Count);
+        Assert.Equal(
+            ["ab", "bc", "mb", "nb", "nl", "nt", "ns", "nu", "on", "pe", "qc", "sk", "yt"],
+            options.Select(option => option.GetAttribute("value")));
+        Assert.Equal(expectedBritishColumbia, options.Single(option => option.GetAttribute("value") == "bc").TextContent);
+        Assert.Equal(expectedQuebec, options.Single(option => option.GetAttribute("value") == "qc").TextContent);
+    }
+
     [Fact]
     public void RootRoute_SelectsFrenchFromBrowserPreference()
     {

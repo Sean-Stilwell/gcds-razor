@@ -77,7 +77,7 @@ internal abstract class DocsExampleBase : ComponentBase
                 ("Options", Options(french, false))),
             "search" => New(("Id", "site-search"), ("Name", "q"), ("Placeholder", french ? "Rechercher" : "Search")),
             "select" => New(("Id", "province"), ("Name", "province"), ("Label", "Province"),
-                ("DefaultValue", french ? "Sélectionnez une province" : "Select a province"), ("ChildContent", SelectOptions())),
+                ("DefaultValue", french ? "Sélectionnez une province" : "Select a province"), ("ChildContent", SelectOptions(french))),
             "side-nav" => New(("Label", french ? "Documentation" : "Documentation"), ("ChildContent", NavLinks(french))),
             "signature" => New(("Type", "signature"), ("Variant", "colour"), ("HasLink", false)),
             "sr-only" => New(("ChildContent", Text(french ? "Contexte supplémentaire" : "Additional context"))),
@@ -168,16 +168,33 @@ internal abstract class DocsExampleBase : ComponentBase
         builder.CloseComponent();
     };
 
-    private static RenderFragment SelectOptions() => builder =>
+    private static RenderFragment SelectOptions(bool french) => builder =>
     {
-        builder.OpenElement(0, "option");
-        builder.AddAttribute(1, "value", "on");
-        builder.AddContent(2, "Ontario");
-        builder.CloseElement();
-        builder.OpenElement(3, "option");
-        builder.AddAttribute(4, "value", "qc");
-        builder.AddContent(5, "Québec");
-        builder.CloseElement();
+        (string Value, string English, string French)[] regions =
+        [
+            ("ab", "Alberta", "Alberta"),
+            ("bc", "British Columbia", "Colombie-Britannique"),
+            ("mb", "Manitoba", "Manitoba"),
+            ("nb", "New Brunswick", "Nouveau-Brunswick"),
+            ("nl", "Newfoundland and Labrador", "Terre-Neuve-et-Labrador"),
+            ("nt", "Northwest Territories", "Territoires du Nord-Ouest"),
+            ("ns", "Nova Scotia", "Nouvelle-Écosse"),
+            ("nu", "Nunavut", "Nunavut"),
+            ("on", "Ontario", "Ontario"),
+            ("pe", "Prince Edward Island", "Île-du-Prince-Édouard"),
+            ("qc", "Quebec", "Québec"),
+            ("sk", "Saskatchewan", "Saskatchewan"),
+            ("yt", "Yukon", "Yukon")
+        ];
+        var sequence = 0;
+
+        foreach (var region in regions)
+        {
+            builder.OpenElement(sequence++, "option");
+            builder.AddAttribute(sequence++, "value", region.Value);
+            builder.AddContent(sequence++, french ? region.French : region.English);
+            builder.CloseElement();
+        }
     };
 }
 
