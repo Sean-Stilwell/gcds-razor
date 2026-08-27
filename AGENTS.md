@@ -13,7 +13,7 @@ Automated bUnit and xUnit tests live in `GcdsWrapper.Blazor.Tests/`.
 - `dotnet build GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj -c Release` verifies release packaging inputs.
 - `dotnet run --project GcdsWrapper.Demo/GcdsWrapper.Demo.csproj` runs the bilingual WebAssembly documentation site.
 - `dotnet publish GcdsWrapper.Demo/GcdsWrapper.Demo.csproj -c Release` creates the GitHub Pages static output.
-- `dotnet test GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj` runs the component tests with Microsoft Testing Platform.
+- `dotnet test --project GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj` runs the component tests with Microsoft Testing Platform.
 - `dotnet format GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj --verify-no-changes` checks standard .NET formatting.
 
 The library is not directly runnable. Exercise changes from a consuming Blazor app and render `GcdsAssets` once to load the upstream GCDS assets.

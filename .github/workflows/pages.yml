@@ -28,7 +28,7 @@ jobs:
         run: dotnet restore GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj
 
       - name: Test
-        run: dotnet test GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj -c Release --no-restore
+        run: dotnet test --project GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj -c Release --no-restore
 
       - name: Publish documentation
         run: dotnet publish GcdsWrapper.Demo/GcdsWrapper.Demo.csproj -c Release --no-restore

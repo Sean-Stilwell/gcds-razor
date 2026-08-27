@@ -19,7 +19,13 @@ Available wrappers include:
 
 ## Installation
 
-When working from this repository, add the library project to your solution and reference it from the consuming Blazor app:
+Install the package from NuGet:
+
+```shell
+dotnet add YourApp/YourApp.csproj package GcdsWrapper.Blazor
+```
+
+When developing against this repository, reference the library project directly instead:
 
 ```shell
 dotnet add YourApp/YourApp.csproj reference GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj
@@ -135,14 +141,14 @@ Open `/en/components` or `/fr/composants`. Each component page provides a live e
 ```shell
 dotnet restore GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj
 dotnet build GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj
-dotnet test GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj
+dotnet test --project GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj
 dotnet format GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj --verify-no-changes
 ```
 
-To verify release packaging inputs:
+To create and verify the release packages:
 
 ```shell
-dotnet build GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj -c Release
+dotnet pack GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj -c Release -o artifacts
 ```
 
 The GitHub Pages workflow publishes the static demo output on pushes to `main`.
