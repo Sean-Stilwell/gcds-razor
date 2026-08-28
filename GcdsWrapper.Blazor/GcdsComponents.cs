@@ -92,7 +92,14 @@ public sealed class GcdsFooter : GcdsComponentBase
     [Parameter] public string? ContextualHeading { get; set; }
     [Parameter] public object? ContextualLinks { get; set; }
     [Parameter] public string? Display { get; set; }
+    [Parameter] public string Lang { get; set; } = "en";
     [Parameter] public object? SubLinks { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Lang is not ("en" or "fr"))
+            throw new ArgumentOutOfRangeException(nameof(Lang), Lang, "Language must be either 'en' or 'fr'.");
+    }
 }
 
 public sealed class GcdsGrid : GcdsComponentBase
@@ -128,9 +135,16 @@ public sealed class GcdsGridCol : GcdsComponentBase
 public sealed class GcdsHeader : GcdsComponentBase
 {
     protected override string TagName => "gcds-header";
+    [Parameter] public string Lang { get; set; } = "en";
     [Parameter, EditorRequired] public string LangHref { get; set; } = default!;
     [Parameter, EditorRequired] public string SkipToHref { get; set; } = default!;
     [Parameter] public bool? SignatureHasLink { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Lang is not ("en" or "fr"))
+            throw new ArgumentOutOfRangeException(nameof(Lang), Lang, "Language must be either 'en' or 'fr'.");
+    }
 }
 
 public sealed class GcdsHeading : GcdsComponentBase
@@ -237,8 +251,15 @@ public sealed class GcdsSignature : GcdsComponentBase
 {
     protected override string TagName => "gcds-signature";
     [Parameter] public bool? HasLink { get; set; }
+    [Parameter] public string Lang { get; set; } = "en";
     [Parameter] public string? Type { get; set; }
     [Parameter] public string? Variant { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Lang is not ("en" or "fr"))
+            throw new ArgumentOutOfRangeException(nameof(Lang), Lang, "Language must be either 'en' or 'fr'.");
+    }
 }
 
 public sealed class GcdsSrOnly : GcdsComponentBase

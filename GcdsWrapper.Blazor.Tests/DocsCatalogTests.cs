@@ -212,6 +212,27 @@ public sealed class DocsCatalogTests
     }
 
     [Theory]
+    [InlineData(DocsLanguage.English, "en")]
+    [InlineData(DocsLanguage.French, "fr")]
+    public void BrandingExamples_UsePageLanguage(DocsLanguage language, string expected)
+    {
+        using var context = CreateContext();
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+
+        foreach (var key in new[] { "header", "footer", "signature" })
+        {
+            var descriptor = DocsCatalog.FindByKey(key)!;
+            navigation.NavigateTo(descriptor.RouteFor(language));
+
+            var component = context.Render<ComponentReference>(parameters =>
+                parameters.Add(page => page.Slug, descriptor.SlugFor(language)));
+
+            Assert.Equal(expected, component.Find($".docs-preview gcds-{key}").GetAttribute("lang"));
+            Assert.Contains($"Lang=\"{expected}\"", descriptor.SnippetFor(language));
+        }
+    }
+
+    [Theory]
     [InlineData(DocsLanguage.English, "British Columbia", "Quebec")]
     [InlineData(DocsLanguage.French, "Colombie-Britannique", "Québec")]
     public void SelectExample_ListsAllProvincesAndTerritories(
