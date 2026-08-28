@@ -233,6 +233,20 @@ public sealed class DocsCatalogTests
     }
 
     [Theory]
+    [InlineData("side-nav")]
+    [InlineData("top-nav")]
+    public void NavigationUsageExamples_IncludeHomeAndRegularLinks(string key)
+    {
+        var descriptor = DocsCatalog.FindByKey(key)!;
+
+        foreach (var snippet in new[] { descriptor.SnippetEnglish, descriptor.SnippetFrench })
+        {
+            Assert.Equal(2, snippet.Split("<GcdsNavLink", StringSplitOptions.None).Length - 1);
+            Assert.Contains("slot=\"home\"", snippet);
+        }
+    }
+
+    [Theory]
     [InlineData(DocsLanguage.English, "British Columbia", "Quebec")]
     [InlineData(DocsLanguage.French, "Colombie-Britannique", "Québec")]
     public void SelectExample_ListsAllProvincesAndTerritories(

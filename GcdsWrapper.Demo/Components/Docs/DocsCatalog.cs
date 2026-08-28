@@ -45,6 +45,30 @@ internal static class DocsCatalog
             ];
         }
         """;
+    private const string SideNavSnippetEnglish = """
+        <GcdsSideNav Label="Documentation">
+            <GcdsNavLink Href="/" slot="home">Home</GcdsNavLink>
+            <GcdsNavLink Href="/components">Components</GcdsNavLink>
+        </GcdsSideNav>
+        """;
+    private const string SideNavSnippetFrench = """
+        <GcdsSideNav Label="Documentation">
+            <GcdsNavLink Href="/fr" slot="home">Accueil</GcdsNavLink>
+            <GcdsNavLink Href="/fr/composants">Composants</GcdsNavLink>
+        </GcdsSideNav>
+        """;
+    private const string TopNavSnippetEnglish = """
+        <GcdsTopNav Label="Main navigation">
+            <GcdsNavLink Href="/" slot="home">Home</GcdsNavLink>
+            <GcdsNavLink Href="/services">Services</GcdsNavLink>
+        </GcdsTopNav>
+        """;
+    private const string TopNavSnippetFrench = """
+        <GcdsTopNav Label="Navigation principale">
+            <GcdsNavLink Href="/fr" slot="home">Accueil</GcdsNavLink>
+            <GcdsNavLink Href="/fr/services">Services</GcdsNavLink>
+        </GcdsTopNav>
+        """;
 
     public static readonly IReadOnlyList<DocsComponentDescriptor> All =
     [
@@ -115,7 +139,7 @@ internal static class DocsCatalog
         D<GcdsSelect, GcdsSelectExample>("select", "Select", "Liste de sélection", "select", "liste-selection", DocsCategory.Forms,
             "select", "liste-selection", "<GcdsSelect Id=\"province\" Name=\"province\" Label=\"Province\" @bind-Value=\"model.Province\">...</GcdsSelect>", "<GcdsSelect Id=\"province\" Name=\"province\" Label=\"Province\" @bind-Value=\"model.Province\">...</GcdsSelect>", FormEvents, bind: true),
         D<GcdsSideNav, GcdsSideNavExample>("side-nav", "Side navigation", "Navigation latérale", "side-navigation", "navigation-laterale", DocsCategory.Navigation,
-            "side-navigation", "navigation-laterale", "<GcdsSideNav Label=\"Documentation\">...</GcdsSideNav>", "<GcdsSideNav Label=\"Documentation\">...</GcdsSideNav>", []),
+            "side-navigation", "navigation-laterale", SideNavSnippetEnglish, SideNavSnippetFrench, []),
         D<GcdsSignature, GcdsSignatureExample>("signature", "Signature", "Signature", "signature", "signature", DocsCategory.Branding,
             "signature", "signature", "<GcdsSignature Lang=\"en\" Type=\"signature\" Variant=\"colour\" />", "<GcdsSignature Lang=\"fr\" Type=\"signature\" Variant=\"colour\" />", []),
         D<GcdsSrOnly, GcdsSrOnlyExample>("sr-only", "Screenreader-only", "Lecteur d’écran seulement", "screenreader-only", "lecteur-ecran-seulement", DocsCategory.Supporting,
@@ -129,7 +153,7 @@ internal static class DocsCatalog
         D<GcdsTextarea, GcdsTextareaExample>("textarea", "Textarea", "Zone de texte", "textarea", "zone-texte", DocsCategory.Forms,
             "textarea", "zone-texte", "<GcdsTextarea Id=\"summary\" Name=\"summary\" Label=\"Summary\" @bind-Value=\"model.Summary\" />", "<GcdsTextarea Id=\"resume\" Name=\"resume\" Label=\"Résumé\" @bind-Value=\"model.Resume\" />", FormEvents, bind: true),
         D<GcdsTopNav, GcdsTopNavExample>("top-nav", "Top navigation", "Navigation supérieure", "top-navigation", "navigation-superieure", DocsCategory.Navigation,
-            "top-navigation", "navigation-superieure", "<GcdsTopNav Label=\"Main navigation\">...</GcdsTopNav>", "<GcdsTopNav Label=\"Navigation principale\">...</GcdsTopNav>", []),
+            "top-navigation", "navigation-superieure", TopNavSnippetEnglish, TopNavSnippetFrench, []),
         D<GcdsTopicMenu, GcdsTopicMenuExample>("topic-menu", "Theme and topic menu", "Menu des thèmes et sujets", "theme-topic-menu", "menu-themes-sujets", DocsCategory.Navigation,
             "theme-topic-menu", "menu-themes-sujets", "<GcdsTopicMenu Lang=\"en\" Home />", "<GcdsTopicMenu Lang=\"fr\" Home />", [])
     ];
