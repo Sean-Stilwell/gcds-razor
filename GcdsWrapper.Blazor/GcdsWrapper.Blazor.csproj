@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <PackageId>GcdsWrapper.Blazor</PackageId>
     <Title>GCDS Wrapper for Blazor</Title>
     <Authors>Sean Stilwell</Authors>
@@ -12,7 +12,7 @@
     <Copyright>Copyright (c) Sean Stilwell 2026</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageProjectUrl>https://github.com/Sean-Stilwell/gcds-razor</PackageProjectUrl>
+    <PackageProjectUrl>https://seanstilwell.ca/gcds-razor/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Sean-Stilwell/gcds-razor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor;razor;gcds;canada;design-system;web-components</PackageTags>

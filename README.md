@@ -151,6 +151,17 @@ To create and verify the release packages:
 dotnet pack GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj -c Release -o artifacts
 ```
 
+## Releasing
+
+Releases are created automatically when a supported semantic version tag is pushed. Update the `<Version>` in `GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj`, commit that change, then create and push an exactly matching tag:
+
+```shell
+git tag v0.1.1
+git push origin v0.1.1
+```
+
+The release workflow tests and verifies the package before publishing it to NuGet.org. After publication succeeds, it creates a GitHub Release with generated release notes and attaches the `.nupkg` and `.snupkg` files. Tags with a prerelease suffix, such as `v0.2.0-beta.1`, publish prerelease packages and are marked as prereleases on GitHub.
+
 The GitHub Pages workflow publishes the static demo output on pushes to `main`.
 
 ## Updating GCDS
