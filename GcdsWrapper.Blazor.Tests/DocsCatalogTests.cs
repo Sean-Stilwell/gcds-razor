@@ -120,6 +120,28 @@ public sealed class DocsCatalogTests
     }
 
     [Fact]
+    public void ComponentIndex_ArrangesCardsInResponsiveGcdsGrids()
+    {
+        using var context = CreateContext();
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo("en/components");
+
+        var component = context.Render<ComponentIndex>();
+        var grids = component.FindAll("gcds-grid");
+
+        Assert.Equal(Enum.GetValues<DocsCategory>().Length, grids.Count);
+        Assert.Equal(DocsCatalog.All.Count, component.FindAll("gcds-grid > gcds-card").Count);
+        Assert.All(grids, grid =>
+        {
+            Assert.Equal("1fr", grid.GetAttribute("columns"));
+            Assert.Equal("1fr 1fr", grid.GetAttribute("columns-tablet"));
+            Assert.Equal("1fr 1fr 1fr", grid.GetAttribute("columns-desktop"));
+            Assert.Equal("300", grid.GetAttribute("gap"));
+            Assert.Equal("true", grid.GetAttribute("equal-row-height"));
+        });
+    }
+
+    [Fact]
     public void NoticeExample_FormatsContentWithGcdsText()
     {
         using var context = CreateContext();

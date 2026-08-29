@@ -24,16 +24,12 @@
 @foreach (var category in Enum.GetValues<DocsCategory>())
 {
     <GcdsHeading Tag="h3">@DocsCatalog.CategoryName(category).Get(Language)</GcdsHeading>
-    <ul class="component-list">
+    <GcdsGrid Columns="1fr" ColumnsTablet="1fr 1fr" ColumnsDesktop="1fr 1fr 1fr" Gap="300" EqualRowHeight>
         @foreach (var item in DocsCatalog.All.Where(item => item.Category == category))
         {
-            <li>
-                <GcdsText><GcdsLink Href="@SiteHref(item.RouteFor(Language))">@item.TitleFor(Language)</GcdsLink></GcdsText>
-                
-                <GcdsText><code>@item.WrapperType.Name</code></GcdsText>
-            </li>
+            <GcdsCard CardTitle="@item.TitleFor(Language)" Href="@SiteHref(item.RouteFor(Language))" Description="@item.SummaryFor(Language)" />
         }
-    </ul>
+    </GcdsGrid>
 }
 
 @code {
