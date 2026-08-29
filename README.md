@@ -1,5 +1,10 @@
 # GCDS Wrapper for Blazor
 
+![NuGet Version](https://img.shields.io/nuget/v/GcdsWrapper.Blazor)
+![NuGet Downloads](https://img.shields.io/nuget/dt/GcdsWrapper.Blazor)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Sean-Stilwell/gcds-razor/.github%2Fworkflows%2Fci.yml)
+
+
 Thin, idiomatic Blazor wrappers for the official [GC Design System (GCDS) components](https://design-system.canada.ca/en/). The library maps Razor parameters and events to the upstream web components; it does not reimplement their markup or styles.
 
 This version targets **.NET 10** and pins `@gcds-core/components` **1.4.0**.
