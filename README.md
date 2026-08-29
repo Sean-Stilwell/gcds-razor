@@ -7,7 +7,7 @@
 
 Thin, idiomatic Blazor wrappers for the official [GC Design System (GCDS) components](https://design-system.canada.ca/en/). The library maps Razor parameters and events to the upstream web components; it does not reimplement their markup or styles.
 
-This version targets **.NET 10** and pins `@gcds-core/components` **1.4.0**.
+This version targets **.NET 10** and pins `@gcds-core/components` **1.5.0**.
 
 ## What is included
 

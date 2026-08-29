@@ -6,6 +6,15 @@ namespace GcdsWrapper.Blazor.Tests;
 public sealed class ComponentRenderingTests
 {
     [Fact]
+    public void Assets_UsePinnedGcdsVersion()
+    {
+        Assert.Equal("1.5.0", GcdsVersion.Components);
+        Assert.Equal(
+            "https://cdn.design-system.canada.ca/@gcds-core/components@1.5.0/dist/gcds",
+            GcdsVersion.CdnBase);
+    }
+
+    [Fact]
     public void BrandingComponents_RenderEnglishLanguageByDefault()
     {
         using var context = new BunitContext();
