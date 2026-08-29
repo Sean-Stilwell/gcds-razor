@@ -1,0 +1,63 @@
+name: Continuous integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Build, test, and validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj
+
+      - name: Verify formatting
+        run: dotnet format GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj --verify-no-changes --no-restore
+
+      - name: Build
+        run: >-
+          dotnet build GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj
+          -c Release
+          --no-restore
+          --property:TreatWarningsAsErrors=true
+
+      - name: Test
+        run: >-
+          dotnet test --project GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj
+          -c Release
+          --no-restore
+          --no-build
+
+      - name: Validate package
+        run: >-
+          dotnet pack GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj
+          -c Release
+          --no-restore
+          --no-build
+          --output artifacts
+          --property:TreatWarningsAsErrors=true
+
+      - name: Publish documentation
+        run: >-
+          dotnet publish GcdsWrapper.Demo/GcdsWrapper.Demo.csproj
+          -c Release
+          --no-restore
+          --no-build
+          --property:TreatWarningsAsErrors=true
