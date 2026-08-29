@@ -103,6 +103,53 @@ public sealed class DocsCatalogTests
         Assert.NotNull(root.QuerySelector("gcds-container"));
     }
 
+    [Theory]
+    [InlineData(false, "Copyright © 2026", "MIT License")]
+    [InlineData(true, "Droit d’auteur © 2026", "licence MIT")]
+    public void Footer_ProvidesLocalizedProjectAndPackageLinks(
+        bool isFrench,
+        string expectedCopyright,
+        string expectedLicense)
+    {
+        using var context = CreateContext();
+
+        var component = context.Render<DocsFooter>(parameters => parameters.Add(footer => footer.IsFrench, isFrench));
+        var footer = component.Find("footer.docs-footer");
+        var links = footer.QuerySelectorAll("gcds-link");
+        var buttons = footer.QuerySelectorAll("gcds-button");
+
+        Assert.Contains(expectedCopyright, footer.TextContent);
+        Assert.Equal(2, links.Length);
+        Assert.Equal("Sean Stilwell", links[0].TextContent.Trim());
+        Assert.Equal(expectedLicense, links[1].TextContent.Trim());
+        Assert.Equal("https://github.com/Sean-Stilwell/gcds-razor/blob/main/LICENSE", links[1].GetAttribute("href"));
+        Assert.Equal(2, buttons.Length);
+        Assert.NotNull(footer.QuerySelector(".footer-content"));
+        Assert.Equal("NuGet", buttons[0].TextContent.Trim());
+        Assert.Equal("https://www.nuget.org/packages/GcdsWrapper.Blazor/", buttons[0].GetAttribute("href"));
+        Assert.Equal("GitHub", buttons[1].TextContent.Trim());
+        Assert.Equal("https://github.com/Sean-Stilwell/gcds-razor", buttons[1].GetAttribute("href"));
+        Assert.All(buttons, button =>
+        {
+            Assert.Equal("_blank", button.GetAttribute("target"));
+            Assert.Equal("noopener noreferrer", button.GetAttribute("rel"));
+        });
+    }
+
+    [Fact]
+    public void Layout_RendersSharedFooterAfterPageContent()
+    {
+        using var context = CreateContext();
+
+        var component = context.Render<DocsLayout>(parameters => parameters
+            .Add(layout => layout.Body, builder => builder.AddMarkupContent(0, "<p id=\"page-content\">Page content</p>")));
+
+        var contentAndFooter = component.FindAll("#page-content, footer.docs-footer");
+
+        Assert.Equal("page-content", contentAndFooter[0].Id);
+        Assert.Equal("footer", contentAndFooter[1].LocalName);
+    }
+
     [Fact]
     public void ComponentPage_RendersPreviewUsageApiBindingAndUpstreamLink()
     {
@@ -142,8 +189,8 @@ public sealed class DocsCatalogTests
     }
 
     [Theory]
-    [InlineData("en/components", "Install the package from NuGet:", "Loading is idempotent")]
-    [InlineData("fr/composants", "Installez le paquet à partir de NuGet :", "Le chargement est idempotent")]
+    [InlineData("en/components", "Install the package from NuGet:", "Duplicate instances do not add duplicate assets")]
+    [InlineData("fr/composants", "Installez le paquet à partir de NuGet :", "Plusieurs instances n’ajoutent pas les ressources en double")]
     public void ComponentIndex_IncludesLocalizedInstallationInstructions(
         string route,
         string expectedIntroduction,

@@ -1,0 +1,32 @@
+<footer class="docs-footer">
+    <GcdsContainer Size="xl" Alignment="center">
+        <div class="footer-content">
+            <GcdsText>
+                @(IsFrench ? "Droit d’auteur © 2026 " : "Copyright © 2026 ")
+                <GcdsLink Href="@(IsFrench ? "https://www.seanstilwell.ca" : "https://seanstilwell.ca/index-fr.html")" Target="_blank" Rel="noopener noreferrer">
+                    Sean Stilwell
+                </GcdsLink>
+                @(IsFrench ? ". Distribué sous " : ". Licensed under the ")
+                <GcdsLink Href="@LicenseUrl" Target="_blank" Rel="noopener noreferrer">
+                    @(IsFrench ? "licence MIT" : "MIT License")
+                </GcdsLink>.
+            </GcdsText>
+
+            <div class="footer-actions">
+                <GcdsButton Type="GcdsButtonType.Link" Href="@NuGetUrl" Target="_blank" Rel="noopener noreferrer">
+                    NuGet
+                </GcdsButton>
+                <GcdsButton Type="GcdsButtonType.Link" Role="GcdsButtonRole.Secondary" Href="@GitHubUrl" Target="_blank" Rel="noopener noreferrer">
+                    GitHub
+                </GcdsButton>
+            </div>
+        </div>
+    </GcdsContainer>
+</footer>
+
+@code {
+    [Parameter] public bool IsFrench { get; set; }
+    private const string NuGetUrl = "https://www.nuget.org/packages/GcdsWrapper.Blazor/";
+    private const string GitHubUrl = "https://github.com/Sean-Stilwell/gcds-razor";
+    private const string LicenseUrl = $"{GitHubUrl}/blob/main/LICENSE";
+}

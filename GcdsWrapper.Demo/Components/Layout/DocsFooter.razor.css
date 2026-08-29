@@ -1,0 +1,26 @@
+.docs-footer {
+    border-top: 1px solid var(--gcds-border-default, #8c8c8c);
+    margin-top: var(--gcds-spacing-600, 2rem);
+    padding-block: var(--gcds-spacing-500, 1.5rem);
+}
+
+.footer-content {
+    align-items: center;
+    display: flex;
+    gap: var(--gcds-spacing-500, 1.5rem);
+    justify-content: space-between;
+}
+
+.footer-actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: var(--gcds-spacing-300, 1rem);
+}
+
+@media (max-width: 48rem) {
+    .footer-content {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

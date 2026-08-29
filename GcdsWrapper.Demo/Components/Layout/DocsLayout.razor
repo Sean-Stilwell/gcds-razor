@@ -18,6 +18,8 @@
     </GcdsGrid>
 </GcdsContainer>
 
+<DocsFooter IsFrench="@IsFrench" />
+
 @code {
     private DocsLanguage Language => DocsLanguageExtensions.FromPath(Navigation.ToBaseRelativePath(Navigation.Uri));
     private bool IsFrench => Language == DocsLanguage.French;
