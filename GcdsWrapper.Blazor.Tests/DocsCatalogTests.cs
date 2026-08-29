@@ -141,6 +141,29 @@ public sealed class DocsCatalogTests
         });
     }
 
+    [Theory]
+    [InlineData("en/components", "Install the package from NuGet:", "Loading is idempotent")]
+    [InlineData("fr/composants", "Installez le paquet à partir de NuGet :", "Le chargement est idempotent")]
+    public void ComponentIndex_IncludesLocalizedInstallationInstructions(
+        string route,
+        string expectedIntroduction,
+        string expectedAssetNote)
+    {
+        using var context = CreateContext();
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(route);
+
+        var component = context.Render<ComponentIndex>();
+        var snippets = component.FindAll(".docs-code code").Select(code => code.TextContent).ToArray();
+
+        Assert.Contains("dotnet add YourApp/YourApp.csproj package GcdsWrapper.Blazor", snippets);
+        Assert.Contains("dotnet add YourApp/YourApp.csproj reference GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj", snippets);
+        Assert.Contains("@using GcdsWrapper.Blazor", snippets);
+        Assert.Contains("<GcdsAssets />", snippets);
+        Assert.Contains(expectedIntroduction, component.Markup);
+        Assert.Contains(expectedAssetNote, component.Markup);
+    }
+
     [Fact]
     public void NoticeExample_FormatsContentWithGcdsText()
     {
