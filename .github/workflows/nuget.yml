@@ -146,6 +146,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
           IS_PRERELEASE: ${{ needs.build.outputs.is_prerelease }}
         run: |
           prerelease_args=()
