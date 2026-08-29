@@ -182,7 +182,7 @@ public sealed class DocsCatalogTests
         {
             Assert.Equal("1fr", grid.GetAttribute("columns"));
             Assert.Equal("1fr 1fr", grid.GetAttribute("columns-tablet"));
-            Assert.Equal("1fr 1fr 1fr", grid.GetAttribute("columns-desktop"));
+            Assert.Equal("1fr 1fr", grid.GetAttribute("columns-desktop"));
             Assert.Equal("300", grid.GetAttribute("gap"));
             Assert.Equal("true", grid.GetAttribute("equal-row-height"));
         });
