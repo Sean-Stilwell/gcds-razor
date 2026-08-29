@@ -162,7 +162,7 @@ git push origin v0.1.1
 
 The release workflow tests and verifies the package before publishing it to NuGet.org. After publication succeeds, it creates a GitHub Release with generated release notes and attaches the `.nupkg` and `.snupkg` files. Tags with a prerelease suffix, such as `v0.2.0-beta.1`, publish prerelease packages and are marked as prereleases on GitHub.
 
-The GitHub Pages workflow publishes the static demo output on pushes to `main`.
+The GitHub Pages workflow publishes the static demo from the released commit after the NuGet release workflow succeeds. It can also be run manually when a documentation-only deployment is needed.
 
 ## Updating GCDS
 
