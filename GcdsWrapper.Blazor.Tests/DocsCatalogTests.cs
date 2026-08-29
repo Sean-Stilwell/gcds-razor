@@ -212,6 +212,27 @@ public sealed class DocsCatalogTests
     }
 
     [Fact]
+    public void ComponentIndex_RerendersWhenLanguageRouteChanges()
+    {
+        using var context = CreateContext();
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo("en/components");
+        var component = context.Render<ComponentIndex>();
+
+        Assert.Contains("GCDS Blazor components", component.Markup);
+        Assert.Contains("Component reference", component.Markup);
+
+        navigation.NavigateTo("fr/composants");
+
+        component.WaitForAssertion(() =>
+        {
+            Assert.Contains("Composants Blazor GCDS", component.Markup);
+            Assert.Contains("Référence des composants", component.Markup);
+            Assert.DoesNotContain("Component reference", component.Markup);
+        });
+    }
+
+    [Fact]
     public void NoticeExample_FormatsContentWithGcdsText()
     {
         using var context = CreateContext();

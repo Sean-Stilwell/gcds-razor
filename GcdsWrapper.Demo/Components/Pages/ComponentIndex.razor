@@ -1,5 +1,6 @@
 @page "/en/components"
 @page "/fr/composants"
+@implements IDisposable
 @inject NavigationManager Navigation
 
 <PageTitle>@(IsFrench ? "Composants Blazor GCDS" : "GCDS Blazor components")</PageTitle>
@@ -46,7 +47,7 @@
 @foreach (var category in Enum.GetValues<DocsCategory>())
 {
     <GcdsHeading Tag="h3">@DocsCatalog.CategoryName(category).Get(Language)</GcdsHeading>
-    <GcdsGrid Columns="1fr" ColumnsTablet="1fr 1fr" ColumnsDesktop="1fr 1fr 1fr" Gap="300" EqualRowHeight>
+    <GcdsGrid Columns="1fr" ColumnsTablet="1fr 1fr" ColumnsDesktop="1fr 1fr" Gap="300" EqualRowHeight>
         @foreach (var item in DocsCatalog.All.Where(item => item.Category == category))
         {
             <GcdsCard CardTitle="@item.TitleFor(Language)" Href="@SiteHref(item.RouteFor(Language))" Description="@item.SummaryFor(Language)" />
@@ -62,4 +63,10 @@
     private const string ProjectReferenceSnippet = "dotnet add YourApp/YourApp.csproj reference GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj";
     private const string ImportsSnippet = "@using GcdsWrapper.Blazor";
     private const string AssetsSnippet = "<GcdsAssets />";
+
+    protected override void OnInitialized() => Navigation.LocationChanged += HandleLocationChanged;
+
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs args) => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Navigation.LocationChanged -= HandleLocationChanged;
 }
