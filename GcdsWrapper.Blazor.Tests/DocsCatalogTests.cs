@@ -125,6 +125,7 @@ public sealed class DocsCatalogTests
         Assert.Equal("https://github.com/Sean-Stilwell/gcds-razor/blob/main/LICENSE", links[1].GetAttribute("href"));
         Assert.Equal(2, buttons.Length);
         Assert.NotNull(footer.QuerySelector(".footer-content"));
+        Assert.Equal("0", footer.QuerySelector("gcds-text")?.GetAttribute("margin-bottom"));
         Assert.Equal("NuGet", buttons[0].TextContent.Trim());
         Assert.Equal("https://www.nuget.org/packages/GcdsWrapper.Blazor/", buttons[0].GetAttribute("href"));
         Assert.Equal("GitHub", buttons[1].TextContent.Trim());
