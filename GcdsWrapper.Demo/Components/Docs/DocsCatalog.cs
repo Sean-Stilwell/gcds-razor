@@ -101,6 +101,120 @@ internal static class DocsCatalog
             <GcdsNavLink Href="/fr/services">Services</GcdsNavLink>
         </GcdsTopNav>
         """;
+    private const string CheckboxesSnippetEnglish = """
+        <GcdsCheckboxes
+            Name="topics"
+            Legend="Topics"
+            Options="@topicOptions"
+            @bind-Value="selectedTopics" />
+
+        @code {
+            private readonly GcdsCheckboxOption[] topicOptions =
+            [
+                new("topics-email", "Email", "email"),
+                new("topics-phone", "Telephone", "phone")
+            ];
+
+            private string[]? selectedTopics = ["email"];
+        }
+        """;
+    private const string CheckboxesSnippetFrench = """
+        <GcdsCheckboxes
+            Name="sujets"
+            Legend="Sujets"
+            Options="@optionsSujets"
+            @bind-Value="sujetsSelectionnes" />
+
+        @code {
+            private readonly GcdsCheckboxOption[] optionsSujets =
+            [
+                new("sujets-courriel", "Courriel", "courriel"),
+                new("sujets-telephone", "Téléphone", "telephone")
+            ];
+
+            private string[]? sujetsSelectionnes = ["courriel"];
+        }
+        """;
+    private const string RadiosSnippetEnglish = """
+        <GcdsRadios
+            Name="contact"
+            Legend="Contact method"
+            Options="@contactOptions"
+            @bind-Value="contactMethod" />
+
+        @code {
+            private readonly GcdsRadioOption[] contactOptions =
+            [
+                new("contact-email", "Email", "email"),
+                new("contact-phone", "Telephone", "phone")
+            ];
+
+            private string? contactMethod = "email";
+        }
+        """;
+    private const string RadiosSnippetFrench = """
+        <GcdsRadios
+            Name="contact"
+            Legend="Mode de communication"
+            Options="@optionsContact"
+            @bind-Value="modeContact" />
+
+        @code {
+            private readonly GcdsRadioOption[] optionsContact =
+            [
+                new("contact-courriel", "Courriel", "courriel"),
+                new("contact-telephone", "Téléphone", "telephone")
+            ];
+
+            private string? modeContact = "courriel";
+        }
+        """;
+    private const string SelectSnippetEnglish = """
+        <GcdsSelect
+            Id="province"
+            Name="province"
+            Label="Province"
+            DefaultValue="Select a province"
+            @bind-Value="selectedProvince">
+            @foreach (var province in provinces)
+            {
+                <option value="@province.Value">@province.Label</option>
+            }
+        </GcdsSelect>
+
+        @code {
+            private readonly (string Value, string Label)[] provinces =
+            [
+                ("ab", "Alberta"),
+                ("bc", "British Columbia")
+            ];
+
+            private string? selectedProvince;
+        }
+        """;
+    private const string SelectSnippetFrench = """
+        <GcdsSelect
+            Id="province"
+            Name="province"
+            Label="Province"
+            DefaultValue="Sélectionnez une province"
+            @bind-Value="provinceSelectionnee">
+            @foreach (var province in provinces)
+            {
+                <option value="@province.Value">@province.Label</option>
+            }
+        </GcdsSelect>
+
+        @code {
+            private readonly (string Value, string Label)[] provinces =
+            [
+                ("ab", "Alberta"),
+                ("bc", "Colombie-Britannique")
+            ];
+
+            private string? provinceSelectionnee;
+        }
+        """;
 
     public static readonly IReadOnlyList<DocsComponentDescriptor> All =
     [
@@ -117,7 +231,7 @@ internal static class DocsCatalog
         D<GcdsCard, GcdsCardExample>("card", "Card", "Carte", "card", "carte", DocsCategory.Layout,
             "card", "carte", "<GcdsCard CardTitle=\"Application guide\" Href=\"/guide\" />", "<GcdsCard CardTitle=\"Guide de demande\" Href=\"/guide\" />", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsCheckboxes, GcdsCheckboxesExample>("checkboxes", "Checkboxes", "Cases à cocher", "checkboxes", "cases-cocher", DocsCategory.Forms,
-            "checkboxes", "cases-cocher", "<GcdsCheckboxes Name=\"topics\" Legend=\"Topics\" Options=\"options\" @bind-Value=\"model.Topics\" />", "<GcdsCheckboxes Name=\"sujets\" Legend=\"Sujets\" Options=\"options\" @bind-Value=\"model.Sujets\" />", FormEvents, bind: true),
+            "checkboxes", "cases-cocher", CheckboxesSnippetEnglish, CheckboxesSnippetFrench, FormEvents, bind: true),
         D<GcdsContainer, GcdsContainerExample>("container", "Container", "Conteneur", "container", "conteneur", DocsCategory.Layout,
             "container", "conteneur", "<GcdsContainer Size=\"md\"><GcdsText>Container content</GcdsText></GcdsContainer>", "<GcdsContainer Size=\"md\"><GcdsText>Contenu du conteneur</GcdsText></GcdsContainer>", []),
         D<GcdsDateInput, GcdsDateInputExample>("date-input", "Date input", "Champ de date", "date-input", "champ-date", DocsCategory.Forms,
@@ -165,11 +279,11 @@ internal static class DocsCatalog
         D<GcdsPagination, GcdsPaginationExample>("pagination", "Pagination", "Pagination", "pagination", "pagination", DocsCategory.Navigation,
             "pagination", "pagination", "<GcdsPagination Label=\"Results\" CurrentPage=\"2\" TotalPages=\"5\" Url=\"/results?page={}\" />", "<GcdsPagination Label=\"Résultats\" CurrentPage=\"2\" TotalPages=\"5\" Url=\"/resultats?page={}\" />", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsRadios, GcdsRadiosExample>("radios", "Radios", "Boutons radio", "radios", "boutons-radio", DocsCategory.Forms,
-            "radios", "boutons-radio", "<GcdsRadios Name=\"contact\" Legend=\"Contact method\" Options=\"options\" @bind-Value=\"model.Contact\" />", "<GcdsRadios Name=\"contact\" Legend=\"Mode de communication\" Options=\"options\" @bind-Value=\"model.Contact\" />", FormEvents, bind: true),
+            "radios", "boutons-radio", RadiosSnippetEnglish, RadiosSnippetFrench, FormEvents, bind: true),
         D<GcdsSearch, GcdsSearchExample>("search", "Search", "Recherche", "search", "recherche", DocsCategory.Forms,
             "search", "recherche", "<GcdsSearch Id=\"site-search\" Name=\"q\" @bind-Value=\"query\" />", "<GcdsSearch Id=\"recherche-site\" Name=\"q\" @bind-Value=\"requete\" />", [.. FormEvents, "OnSubmit"], bind: true),
         D<GcdsSelect, GcdsSelectExample>("select", "Select", "Liste de sélection", "select", "liste-selection", DocsCategory.Forms,
-            "select", "liste-selection", "<GcdsSelect Id=\"province\" Name=\"province\" Label=\"Province\" @bind-Value=\"model.Province\">...</GcdsSelect>", "<GcdsSelect Id=\"province\" Name=\"province\" Label=\"Province\" @bind-Value=\"model.Province\">...</GcdsSelect>", FormEvents, bind: true),
+            "select", "liste-selection", SelectSnippetEnglish, SelectSnippetFrench, FormEvents, bind: true),
         D<GcdsSideNav, GcdsSideNavExample>("side-nav", "Side navigation", "Barre de navigation latérale", "side-navigation", "barre-de-navigation-laterale", DocsCategory.Navigation,
             "side-navigation", "barre-de-navigation-laterale", SideNavSnippetEnglish, SideNavSnippetFrench, []),
         D<GcdsSignature, GcdsSignatureExample>("signature", "Signature", "Signature", "signature", "signature", DocsCategory.Branding,

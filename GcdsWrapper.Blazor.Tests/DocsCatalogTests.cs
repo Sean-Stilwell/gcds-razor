@@ -435,6 +435,28 @@ public sealed class DocsCatalogTests
         Assert.Equal(expectedQuebec, options.Single(option => option.GetAttribute("value") == "qc").TextContent);
     }
 
+    [Theory]
+    [InlineData("checkboxes", "GcdsCheckboxOption[]", "string[]?", "Options=\"@")]
+    [InlineData("radios", "GcdsRadioOption[]", "string?", "Options=\"@")]
+    [InlineData("select", "(string Value, string Label)[]", "string?", "@foreach")]
+    public void ChoiceUsageExamples_DefineOptionsAndBoundValues(
+        string key,
+        string expectedOptionsType,
+        string expectedValueType,
+        string expectedOptionsMarkup)
+    {
+        var descriptor = DocsCatalog.FindByKey(key)!;
+
+        foreach (var snippet in new[] { descriptor.SnippetEnglish, descriptor.SnippetFrench })
+        {
+            Assert.Contains(expectedOptionsType, snippet);
+            Assert.Contains(expectedValueType, snippet);
+            Assert.Contains(expectedOptionsMarkup, snippet);
+            Assert.Contains("@bind-Value", snippet);
+            Assert.Contains("@code", snippet);
+        }
+    }
+
     [Fact]
     public void ChoiceAndFileExamples_UseValidInitialAttributes()
     {
