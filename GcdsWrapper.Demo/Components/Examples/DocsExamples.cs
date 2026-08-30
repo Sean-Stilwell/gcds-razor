@@ -102,7 +102,7 @@ internal abstract class DocsExampleBase : ComponentBase
                 ("Sort", true)),
             "text" => New(("ChildContent", Text(french ? "Corps du texte." : "Body text."))),
             "textarea" => New(("Id", "summary"), ("Name", "summary"), ("Label", french ? "Résumé" : "Summary"), ("Rows", 4)),
-            "top-nav" => New(("Label", french ? "Navigation principale" : "Main navigation"), ("ChildContent", NavLinks(french))),
+            "top-nav" => New(("Label", french ? "Navigation principale" : "Main navigation"), ("ChildContent", TopNavLinks(french))),
             "topic-menu" => New(("Lang", french ? "fr" : "en"), ("Home", true)),
             _ => throw new InvalidOperationException($"No parameters are defined for '{Key}'.")
         };
@@ -181,6 +181,21 @@ internal abstract class DocsExampleBase : ComponentBase
         builder.OpenComponent<GcdsNavLink>(0);
         builder.AddAttribute(1, nameof(GcdsNavLink.Href), "#preview");
         builder.AddAttribute(2, nameof(GcdsComponentBase.ChildContent), Text(french ? "Composants" : "Components"));
+        builder.CloseComponent();
+    };
+
+    private static RenderFragment TopNavLinks(bool french) => builder =>
+    {
+        builder.OpenComponent<GcdsNavLink>(0);
+        builder.AddAttribute(1, nameof(GcdsNavLink.Href), french ? "/fr" : "/");
+        builder.AddAttribute(2, nameof(GcdsComponentBase.AdditionalAttributes),
+            new Dictionary<string, object> { ["slot"] = "home" });
+        builder.AddAttribute(3, nameof(GcdsComponentBase.ChildContent), Text(french ? "Accueil" : "Home"));
+        builder.CloseComponent();
+
+        builder.OpenComponent<GcdsNavLink>(4);
+        builder.AddAttribute(5, nameof(GcdsNavLink.Href), french ? "/fr/services" : "/services");
+        builder.AddAttribute(6, nameof(GcdsComponentBase.ChildContent), Text(french ? "Services" : "Services"));
         builder.CloseComponent();
     };
 

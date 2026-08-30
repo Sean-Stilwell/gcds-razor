@@ -386,6 +386,31 @@ public sealed class DocsCatalogTests
     }
 
     [Theory]
+    [InlineData(DocsLanguage.English, "Home", "/", "/services")]
+    [InlineData(DocsLanguage.French, "Accueil", "/fr", "/fr/services")]
+    public void TopNavExample_RendersUsageSampleLinks(
+        DocsLanguage language,
+        string expectedHomeLabel,
+        string expectedHomeHref,
+        string expectedServiceHref)
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey("top-nav")!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(language));
+
+        var component = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, descriptor.SlugFor(language)));
+        var links = component.FindAll(".docs-preview gcds-top-nav gcds-nav-link");
+
+        Assert.Equal(2, links.Count);
+        Assert.Equal("home", links[0].GetAttribute("slot"));
+        Assert.Equal(expectedHomeLabel, links[0].TextContent.Trim());
+        Assert.Equal(expectedHomeHref, links[0].GetAttribute("href"));
+        Assert.Equal(expectedServiceHref, links[1].GetAttribute("href"));
+    }
+
+    [Theory]
     [InlineData(DocsLanguage.English, "British Columbia", "Quebec")]
     [InlineData(DocsLanguage.French, "Colombie-Britannique", "Québec")]
     public void SelectExample_ListsAllProvincesAndTerritories(

@@ -184,8 +184,8 @@ internal static class DocsCatalog
             "text", "texte", "<GcdsText>Body text.</GcdsText>", "<GcdsText>Corps du texte.</GcdsText>", []),
         D<GcdsTextarea, GcdsTextareaExample>("textarea", "Textarea", "Zone de texte", "textarea", "zone-texte", DocsCategory.Forms,
             "textarea", "zone-texte", "<GcdsTextarea Id=\"summary\" Name=\"summary\" Label=\"Summary\" @bind-Value=\"model.Summary\" />", "<GcdsTextarea Id=\"resume\" Name=\"resume\" Label=\"Résumé\" @bind-Value=\"model.Resume\" />", FormEvents, bind: true),
-        D<GcdsTopNav, GcdsTopNavExample>("top-nav", "Top navigation", "Barre de navigation supérieure", "barre-de-navigation-superieure", "navigation-superieure", DocsCategory.Navigation,
-            "barre-de-navigation-superieure", "navigation-superieure", TopNavSnippetEnglish, TopNavSnippetFrench, []),
+        D<GcdsTopNav, GcdsTopNavExample>("top-nav", "Top navigation", "Barre de navigation supérieure", "top-navigation", "barre-de-navigation-superieure", DocsCategory.Navigation,
+            "top-navigation", "barre-de-navigation-superieure", TopNavSnippetEnglish, TopNavSnippetFrench, []),
         D<GcdsTopicMenu, GcdsTopicMenuExample>("topic-menu", "Theme and topic menu", "Menu thématique", "theme-topic-menu", "menu-thematique", DocsCategory.Navigation,
             "theme-topic-menu", "menu-thematique", "<GcdsTopicMenu Lang=\"en\" Home />", "<GcdsTopicMenu Lang=\"fr\" Home />", [])
     ];
