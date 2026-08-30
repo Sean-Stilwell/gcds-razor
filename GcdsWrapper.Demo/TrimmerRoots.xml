@@ -1,8 +1,6 @@
 <linker>
   <assembly fullname="Microsoft.AspNetCore.Components.Web">
-    <!-- InputBase supplies this private property through reflection. Keep its setter in published WASM builds. -->
-    <type fullname="Microsoft.AspNetCore.Components.Forms.InputBase`1">
-      <property name="CascadedEditContext" />
-    </type>
+    <!-- InputBase supplies private cascading properties through reflection. Keep the type intact in published WASM builds. -->
+    <type fullname="Microsoft.AspNetCore.Components.Forms.InputBase`1" preserve="all" />
   </assembly>
 </linker>
