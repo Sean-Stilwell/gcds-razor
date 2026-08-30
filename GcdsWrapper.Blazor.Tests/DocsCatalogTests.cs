@@ -347,6 +347,31 @@ public sealed class DocsCatalogTests
     }
 
     [Theory]
+    [InlineData(DocsLanguage.English, "GC Design System", "Components", "#components")]
+    [InlineData(DocsLanguage.French, "Système de design GC", "Composants", "#composants")]
+    public void FooterExample_IncludesContextualHeadingAndLinks(
+        DocsLanguage language,
+        string expectedHeading,
+        string expectedLinkLabel,
+        string expectedHref)
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey("footer")!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(language));
+
+        var component = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, descriptor.SlugFor(language)));
+        var footer = component.Find(".docs-preview gcds-footer");
+        using var links = JsonDocument.Parse(footer.GetAttribute("contextual-links")!);
+
+        Assert.Equal(expectedHeading, footer.GetAttribute("contextual-heading"));
+        Assert.Equal(expectedHref, links.RootElement.GetProperty(expectedLinkLabel).GetString());
+        Assert.Contains("ContextualHeading=", descriptor.SnippetFor(language));
+        Assert.Contains("ContextualLinks=", descriptor.SnippetFor(language));
+    }
+
+    [Theory]
     [InlineData("side-nav")]
     [InlineData("top-nav")]
     public void NavigationUsageExamples_IncludeHomeAndRegularLinks(string key)

@@ -45,6 +45,38 @@ internal static class DocsCatalog
             ];
         }
         """;
+    private const string FooterSnippetEnglish = """
+        <GcdsFooter
+            Lang="en"
+            Display="compact"
+            ContextualHeading="GC Design System"
+            ContextualLinks="@contextualLinks" />
+
+        @code {
+            private readonly Dictionary<string, string> contextualLinks = new()
+            {
+                ["Components"] = "#components",
+                ["Styles"] = "#styles",
+                ["Resources"] = "#resources"
+            };
+        }
+        """;
+    private const string FooterSnippetFrench = """
+        <GcdsFooter
+            Lang="fr"
+            Display="compact"
+            ContextualHeading="Système de design GC"
+            ContextualLinks="@liensContextuels" />
+
+        @code {
+            private readonly Dictionary<string, string> liensContextuels = new()
+            {
+                ["Composants"] = "#composants",
+                ["Styles"] = "#styles",
+                ["Ressources"] = "#ressources"
+            };
+        }
+        """;
     private const string SideNavSnippetEnglish = """
         <GcdsSideNav Label="Documentation">
             <GcdsNavLink Href="/" slot="home">Home</GcdsNavLink>
@@ -103,7 +135,7 @@ internal static class DocsCatalog
         D<GcdsFileUploader, GcdsFileUploaderExample>("file-uploader", "File uploader", "Téléverseur de fichiers", "file-uploader", "televerseur-fichiers", DocsCategory.Forms,
             "file-uploader", "televerseur-fichiers", "<GcdsFileUploader Id=\"files\" Name=\"files\" Label=\"Documents\" @bind-Value=\"model.Files\" />", "<GcdsFileUploader Id=\"fichiers\" Name=\"fichiers\" Label=\"Documents\" @bind-Value=\"model.Fichiers\" />", [.. FormEvents, "OnRemoveFile"], bind: true),
         D<GcdsFooter, GcdsFooterExample>("footer", "Footer", "Pied de page", "footer", "pied-de-page", DocsCategory.Branding,
-            "footer", "pied-de-page", "<GcdsFooter Lang=\"en\" Display=\"compact\" />", "<GcdsFooter Lang=\"fr\" Display=\"compact\" />", ["OnClick", "OnFocus", "OnBlur"]),
+            "footer", "pied-de-page", FooterSnippetEnglish, FooterSnippetFrench, ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsGrid, GcdsGridExample>("grid", "Grid", "Grille", "grid", "grille", DocsCategory.Layout,
             "grid", "grille", "<GcdsGrid Columns=\"1fr 1fr\"><GcdsText>First column</GcdsText><GcdsText>Second column</GcdsText></GcdsGrid>", "<GcdsGrid Columns=\"1fr 1fr\"><GcdsText>Première colonne</GcdsText><GcdsText>Deuxième colonne</GcdsText></GcdsGrid>", []),
         D<GcdsGridCol, GcdsGridColExample>("grid-col", "Grid column", "Colonne de grille", "grid-col", "colonne-grille", DocsCategory.Supporting,

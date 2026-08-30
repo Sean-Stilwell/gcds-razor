@@ -54,7 +54,9 @@ internal abstract class DocsExampleBase : ComponentBase
                 ("ChildContent", Text(french ? "Champs connexes" : "Related fields"))),
             "file-uploader" => New(("Id", "documents"), ("Name", "documents"), ("Label", french ? "Documents" : "Documents"),
                 ("Accept", ".pdf")),
-            "footer" => New(("Lang", french ? "fr" : "en"), ("Display", "compact")),
+            "footer" => New(("Lang", french ? "fr" : "en"), ("Display", "compact"),
+                ("ContextualHeading", french ? "Système de design GC" : "GC Design System"),
+                ("ContextualLinks", FooterLinks(french))),
             "grid" => New(("Columns", "1fr 1fr"), ("Gap", "300"), ("ChildContent", GridContent(french))),
             "grid-col" => New(("Desktop", 6), ("ChildContent", FormattedText(french ? "Colonne de grille" : "Grid column"))),
             "header" => New(("Lang", french ? "fr" : "en"),
@@ -142,6 +144,20 @@ internal abstract class DocsExampleBase : ComponentBase
         new("contact-email", french ? "Courriel" : "Email", "email"),
         new("contact-phone", french ? "Téléphone" : "Telephone", "phone")
     ];
+
+    private static Dictionary<string, string> FooterLinks(bool french) => french
+        ? new()
+        {
+            ["Composants"] = "#composants",
+            ["Styles"] = "#styles",
+            ["Ressources"] = "#ressources"
+        }
+        : new()
+        {
+            ["Components"] = "#components",
+            ["Styles"] = "#styles",
+            ["Resources"] = "#resources"
+        };
 
     private static RenderFragment Text(string value) => builder => builder.AddContent(0, value);
 
