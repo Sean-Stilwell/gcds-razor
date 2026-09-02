@@ -506,6 +506,21 @@ public sealed class DocsCatalogTests
     }
 
     [Fact]
+    public void DateInputExample_StartsWithBlankDateFields()
+    {
+        using var context = CreateContext();
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        var descriptor = DocsCatalog.FindByKey("date-input")!;
+        navigation.NavigateTo(descriptor.RouteFor(DocsLanguage.English));
+
+        var page = context.Render<ComponentReference>(parameters =>
+            parameters.Add(component => component.Slug, descriptor.Slug.English));
+        var dateInput = page.Find(".docs-preview gcds-date-input");
+
+        Assert.Null(dateInput.GetAttribute("value"));
+    }
+
+    [Fact]
     public void RootRoute_SelectsFrenchFromBrowserPreference()
     {
         using var context = CreateContext();

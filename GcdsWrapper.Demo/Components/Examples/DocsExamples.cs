@@ -121,6 +121,7 @@ internal abstract class DocsExampleBase : ComponentBase
         }
         else if (DocsCatalog.FindByKey(Key)?.SupportsBinding == true)
         {
+            if (Key == "date-input" && textValue == "example") textValue = null;
             if (Key == "radios" && textValue == "example") textValue = "email";
             parameters["Value"] = textValue!;
             parameters["ValueChanged"] = EventCallback.Factory.Create<string?>(this, value => textValue = value);
