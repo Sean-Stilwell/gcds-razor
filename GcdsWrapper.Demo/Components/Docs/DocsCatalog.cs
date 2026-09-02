@@ -101,6 +101,18 @@ internal static class DocsCatalog
             <GcdsNavLink Href="/fr/services">Services</GcdsNavLink>
         </GcdsTopNav>
         """;
+    private const string BreadcrumbsSnippetEnglish = """
+        <GcdsBreadcrumbs>
+            <GcdsBreadcrumbsItem Href="#home">Home</GcdsBreadcrumbsItem>
+            <GcdsBreadcrumbsItem Href="#components">Components</GcdsBreadcrumbsItem>
+        </GcdsBreadcrumbs>
+        """;
+    private const string BreadcrumbsSnippetFrench = """
+        <GcdsBreadcrumbs>
+            <GcdsBreadcrumbsItem Href="#home">Accueil</GcdsBreadcrumbsItem>
+            <GcdsBreadcrumbsItem Href="#components">Composants</GcdsBreadcrumbsItem>
+        </GcdsBreadcrumbs>
+        """;
     private const string CheckboxesSnippetEnglish = """
         <GcdsCheckboxes
             Name="topics"
@@ -223,7 +235,7 @@ internal static class DocsCatalog
         D<GcdsAlert, GcdsAlertExample>("alert", "Alert", "Alerte", "alert", "alerte", DocsCategory.Feedback,
             "alert", "alerte", "<GcdsAlert Heading=\"Service update\">Message</GcdsAlert>", "<GcdsAlert Heading=\"Mise à jour du service\">Message</GcdsAlert>", ["OnDismiss"]),
         D<GcdsBreadcrumbs, GcdsBreadcrumbsExample>("breadcrumbs", "Breadcrumbs", "Chemin de navigation", "breadcrumbs", "chemin-de-navigation", DocsCategory.Navigation,
-            "breadcrumbs", "chemin-de-navigation", "<GcdsBreadcrumbs>...</GcdsBreadcrumbs>", "<GcdsBreadcrumbs>...</GcdsBreadcrumbs>", []),
+            "breadcrumbs", "chemin-de-navigation", BreadcrumbsSnippetEnglish, BreadcrumbsSnippetFrench, []),
         D<GcdsBreadcrumbsItem, GcdsBreadcrumbsItemExample>("breadcrumbs-item", "Breadcrumbs item", "Élément du chemin de navigation", "breadcrumbs-item", "element-chemin-de-navigation", DocsCategory.Supporting,
             "breadcrumbs", "chemin-de-navigation", "<GcdsBreadcrumbsItem Href=\"/\">Home</GcdsBreadcrumbsItem>", "<GcdsBreadcrumbsItem Href=\"/\">Accueil</GcdsBreadcrumbsItem>", ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsButton, GcdsButtonExample>("button", "Button", "Bouton", "button", "bouton", DocsCategory.Forms,

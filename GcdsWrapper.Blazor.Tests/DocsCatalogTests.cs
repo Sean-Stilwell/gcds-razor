@@ -249,6 +249,33 @@ public sealed class DocsCatalogTests
     }
 
     [Theory]
+    [InlineData(DocsLanguage.English, "Home", "Components")]
+    [InlineData(DocsLanguage.French, "Accueil", "Composants")]
+    public void BreadcrumbsExample_RendersTwoLinksAndMatchingUsage(
+        DocsLanguage language,
+        string firstLabel,
+        string secondLabel)
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey("breadcrumbs")!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(language));
+
+        var component = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, descriptor.SlugFor(language)));
+        var items = component.FindAll(".docs-preview gcds-breadcrumbs-item");
+        var snippet = language == DocsLanguage.French
+            ? descriptor.SnippetFrench
+            : descriptor.SnippetEnglish;
+
+        Assert.Equal(2, items.Count);
+        Assert.Equal(["#home", "#components"], items.Select(item => item.GetAttribute("href")));
+        Assert.Equal([firstLabel, secondLabel], items.Select(item => item.TextContent.Trim()));
+        Assert.Contains($">{firstLabel}</GcdsBreadcrumbsItem>", snippet);
+        Assert.Contains($">{secondLabel}</GcdsBreadcrumbsItem>", snippet);
+    }
+
+    [Theory]
     [InlineData("container")]
     [InlineData("details")]
     [InlineData("grid")]

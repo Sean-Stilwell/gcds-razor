@@ -175,6 +175,11 @@ internal abstract class DocsExampleBase : ComponentBase
         builder.AddAttribute(1, nameof(GcdsBreadcrumbsItem.Href), "#home");
         builder.AddAttribute(2, nameof(GcdsComponentBase.ChildContent), Text(french ? "Accueil" : "Home"));
         builder.CloseComponent();
+
+        builder.OpenComponent<GcdsBreadcrumbsItem>(3);
+        builder.AddAttribute(4, nameof(GcdsBreadcrumbsItem.Href), "#components");
+        builder.AddAttribute(5, nameof(GcdsComponentBase.ChildContent), Text(french ? "Composants" : "Components"));
+        builder.CloseComponent();
     };
 
     private static RenderFragment NavLinks(bool french) => builder =>
