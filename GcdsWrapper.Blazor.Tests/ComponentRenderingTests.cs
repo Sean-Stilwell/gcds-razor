@@ -8,10 +8,39 @@ public sealed class ComponentRenderingTests
     [Fact]
     public void Assets_UsePinnedGcdsVersion()
     {
-        Assert.Equal("1.5.0", GcdsVersion.Components);
+        Assert.Equal("1.6.0", GcdsVersion.Components);
         Assert.Equal(
-            "https://cdn.design-system.canada.ca/@gcds-core/components@1.5.0/dist/gcds",
+            "https://cdn.design-system.canada.ca/@gcds-core/components@1.6.0/dist/gcds",
             GcdsVersion.CdnBase);
+    }
+
+    [Fact]
+    public void Card_RendersRichTitleSlotWithTextFallback()
+    {
+        using var context = new BunitContext();
+        context.JSInterop.Mode = JSRuntimeMode.Loose;
+
+        var component = context.Render<GcdsCard>(parameters => parameters
+            .Add(card => card.CardTitle, "GC application guide")
+            .Add(card => card.Href, "/guide")
+            .AddChildContent(builder =>
+            {
+                builder.OpenElement(0, "span");
+                builder.AddAttribute(1, "slot", "title");
+                builder.OpenElement(2, "abbr");
+                builder.AddAttribute(3, "title", "Government of Canada");
+                builder.AddContent(4, "GC");
+                builder.CloseElement();
+                builder.AddContent(5, " application guide");
+                builder.CloseElement();
+            }));
+
+        var card = component.Find("gcds-card");
+        var title = component.Find("gcds-card > span[slot='title']");
+
+        Assert.Equal("GC application guide", card.GetAttribute("card-title"));
+        Assert.Equal("Government of Canada", title.QuerySelector("abbr")?.GetAttribute("title"));
+        Assert.Equal("GC application guide", title.TextContent);
     }
 
     [Fact]

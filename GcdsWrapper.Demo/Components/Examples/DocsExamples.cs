@@ -38,13 +38,15 @@ internal abstract class DocsExampleBase : ComponentBase
             "breadcrumbs" => New(("ChildContent", Breadcrumbs(french))),
             "breadcrumbs-item" => New(("Href", "#preview"), ("ChildContent", Text(french ? "Accueil" : "Home"))),
             "button" => New(("Role", GcdsButtonRole.Primary), ("ChildContent", Text(french ? "Enregistrer" : "Save"))),
-            "card" => New(("CardTitle", french ? "Guide de demande" : "Application guide"), ("Href", "#preview"),
-                ("Description", french ? "Un exemple de carte Blazor." : "An example Blazor card.")),
+            "card" => New(("CardTitle", french ? "Guide de demande du GC" : "GC application guide"), ("Href", "#preview"),
+                ("Description", french ? "Un exemple de carte Blazor." : "An example Blazor card."),
+                ("ChildContent", CardContent(french))),
             "checkboxes" => New(("Name", "topics"), ("Legend", french ? "Sujets" : "Topics"),
                 ("Options", CheckboxOptions(french))),
             "container" => New(("Size", "md"), ("Padding", "300"),
                 ("ChildContent", FormattedText(french ? "Contenu du conteneur" : "Container content"))),
-            "date-input" => New(("Name", "start-date"), ("Legend", french ? "Date de début" : "Start date")),
+            "date-input" => New(("Name", "birth-date"), ("Legend", french ? "Date de naissance" : "Birth date"),
+                ("Autocomplete", "bday")),
             "date-modified" => New(("ChildContent", Text("2026-08-26"))),
             "details" => New(("DetailsTitle", french ? "Renseignements supplémentaires" : "More information"),
                 ("ChildContent", FormattedText(french ? "Détails utiles." : "Helpful details."))),
@@ -167,6 +169,25 @@ internal abstract class DocsExampleBase : ComponentBase
         builder.OpenComponent<GcdsText>(0);
         builder.AddAttribute(1, nameof(GcdsComponentBase.ChildContent), Text(value));
         builder.CloseComponent();
+    };
+
+    private static RenderFragment CardContent(bool french) => builder =>
+    {
+        builder.OpenElement(0, "span");
+        builder.AddAttribute(1, "slot", "title");
+
+        if (french)
+            builder.AddContent(2, "Guide de demande du ");
+
+        builder.OpenElement(3, "abbr");
+        builder.AddAttribute(4, "title", french ? "Gouvernement du Canada" : "Government of Canada");
+        builder.AddContent(5, "GC");
+        builder.CloseElement();
+
+        if (!french)
+            builder.AddContent(6, " application guide");
+
+        builder.CloseElement();
     };
 
     private static RenderFragment Breadcrumbs(bool french) => builder =>

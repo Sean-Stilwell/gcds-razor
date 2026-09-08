@@ -249,6 +249,32 @@ public sealed class DocsCatalogTests
     }
 
     [Theory]
+    [InlineData(DocsLanguage.English, "GC application guide", "Government of Canada")]
+    [InlineData(DocsLanguage.French, "Guide de demande du GC", "Gouvernement du Canada")]
+    public void CardExample_RendersRichTitleSlotAndTextFallback(
+        DocsLanguage language,
+        string expectedTitle,
+        string expectedAbbreviation)
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey("card")!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(language));
+
+        var page = context.Render<ComponentReference>(parameters =>
+            parameters.Add(component => component.Slug, descriptor.SlugFor(language)));
+        var card = page.Find(".docs-preview gcds-card");
+        var title = page.Find(".docs-preview gcds-card > span[slot='title']");
+        var snippet = descriptor.SnippetFor(language);
+
+        Assert.Equal(expectedTitle, card.GetAttribute("card-title"));
+        Assert.Equal(expectedTitle, title.TextContent);
+        Assert.Equal(expectedAbbreviation, title.QuerySelector("abbr")?.GetAttribute("title"));
+        Assert.Contains("slot=\"title\"", snippet);
+        Assert.Contains("CardTitle=", snippet);
+    }
+
+    [Theory]
     [InlineData(DocsLanguage.English, "Home", "Components")]
     [InlineData(DocsLanguage.French, "Accueil", "Composants")]
     public void BreadcrumbsExample_RendersTwoLinksAndMatchingUsage(
@@ -533,7 +559,7 @@ public sealed class DocsCatalogTests
     }
 
     [Fact]
-    public void DateInputExample_StartsWithBlankDateFields()
+    public void DateInputExample_UsesAutocompleteAndStartsWithBlankDateFields()
     {
         using var context = CreateContext();
         var navigation = context.Services.GetRequiredService<NavigationManager>();
@@ -545,6 +571,9 @@ public sealed class DocsCatalogTests
         var dateInput = page.Find(".docs-preview gcds-date-input");
 
         Assert.Null(dateInput.GetAttribute("value"));
+        Assert.Equal("bday", dateInput.GetAttribute("autocomplete"));
+        Assert.Contains("Autocomplete=\"bday\"", descriptor.SnippetEnglish);
+        Assert.Contains("Autocomplete=\"bday\"", descriptor.SnippetFrench);
     }
 
     [Fact]

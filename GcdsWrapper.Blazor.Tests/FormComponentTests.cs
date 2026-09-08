@@ -94,6 +94,26 @@ public sealed class FormComponentTests
     }
 
     [Fact]
+    public void DateInput_RendersAutocompleteOnlyWhenProvided()
+    {
+        using var context = CreateContext();
+        var model = new TestModel();
+
+        var withAutocomplete = context.Render<GcdsDateInput>(parameters => parameters
+            .Add(input => input.Name, "birth-date")
+            .Add(input => input.Legend, "Birth date")
+            .Add(input => input.Autocomplete, "bday")
+            .Add(input => input.ValueExpression, () => model.StartDate));
+        var withoutAutocomplete = context.Render<GcdsDateInput>(parameters => parameters
+            .Add(input => input.Name, "start-date")
+            .Add(input => input.Legend, "Start date")
+            .Add(input => input.ValueExpression, () => model.StartDate));
+
+        Assert.Equal("bday", withAutocomplete.Find("gcds-date-input").GetAttribute("autocomplete"));
+        Assert.Null(withoutAutocomplete.Find("gcds-date-input").GetAttribute("autocomplete"));
+    }
+
+    [Fact]
     public void Input_DisplaysEditFormValidationMessage()
     {
         using var context = CreateContext();

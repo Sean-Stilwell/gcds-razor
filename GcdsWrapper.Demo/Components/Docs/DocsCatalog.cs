@@ -9,6 +9,36 @@ namespace GcdsWrapper.Demo.Components.Docs;
 internal static class DocsCatalog
 {
     private static readonly string[] FormEvents = ["OnInput", "OnChange", "OnValid", "OnInvalid", "OnFocus", "OnBlur"];
+    private const string CardSnippetEnglish = """
+        <GcdsCard
+            CardTitle="GC application guide"
+            Href="/guide"
+            Description="Learn how to submit an application.">
+            <span slot="title"><abbr title="Government of Canada">GC</abbr> application guide</span>
+        </GcdsCard>
+        """;
+    private const string CardSnippetFrench = """
+        <GcdsCard
+            CardTitle="Guide de demande du GC"
+            Href="/guide"
+            Description="Apprenez comment soumettre une demande.">
+            <span slot="title">Guide de demande du <abbr title="Gouvernement du Canada">GC</abbr></span>
+        </GcdsCard>
+        """;
+    private const string DateInputSnippetEnglish = """
+        <GcdsDateInput
+            Name="date"
+            Legend="Birth date"
+            Autocomplete="bday"
+            @bind-Value="model.Date" />
+        """;
+    private const string DateInputSnippetFrench = """
+        <GcdsDateInput
+            Name="date"
+            Legend="Date de naissance"
+            Autocomplete="bday"
+            @bind-Value="model.Date" />
+        """;
     private const string TableSnippetEnglish = """
         <GcdsTable Columns="@columns" Data="@rows" Sort />
 
@@ -241,13 +271,13 @@ internal static class DocsCatalog
         D<GcdsButton, GcdsButtonExample>("button", "Button", "Bouton", "button", "bouton", DocsCategory.Forms,
             "button", "bouton", "<GcdsButton Role=\"GcdsButtonRole.Primary\">Save</GcdsButton>", "<GcdsButton Role=\"GcdsButtonRole.Primary\">Enregistrer</GcdsButton>", ["OnClick"]),
         D<GcdsCard, GcdsCardExample>("card", "Card", "Carte", "card", "carte", DocsCategory.Layout,
-            "card", "carte", "<GcdsCard CardTitle=\"Application guide\" Href=\"/guide\" />", "<GcdsCard CardTitle=\"Guide de demande\" Href=\"/guide\" />", ["OnClick", "OnFocus", "OnBlur"]),
+            "card", "carte", CardSnippetEnglish, CardSnippetFrench, ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsCheckboxes, GcdsCheckboxesExample>("checkboxes", "Checkboxes", "Cases à cocher", "checkboxes", "cases-cocher", DocsCategory.Forms,
             "checkboxes", "cases-cocher", CheckboxesSnippetEnglish, CheckboxesSnippetFrench, FormEvents, bind: true),
         D<GcdsContainer, GcdsContainerExample>("container", "Container", "Conteneur", "container", "conteneur", DocsCategory.Layout,
             "container", "conteneur", "<GcdsContainer Size=\"md\"><GcdsText>Container content</GcdsText></GcdsContainer>", "<GcdsContainer Size=\"md\"><GcdsText>Contenu du conteneur</GcdsText></GcdsContainer>", []),
         D<GcdsDateInput, GcdsDateInputExample>("date-input", "Date input", "Champ de date", "date-input", "champ-date", DocsCategory.Forms,
-            "date-input", "champ-date", "<GcdsDateInput Name=\"date\" Legend=\"Start date\" @bind-Value=\"model.Date\" />", "<GcdsDateInput Name=\"date\" Legend=\"Date de début\" @bind-Value=\"model.Date\" />", FormEvents, bind: true),
+            "date-input", "champ-date", DateInputSnippetEnglish, DateInputSnippetFrench, FormEvents, bind: true),
         D<GcdsDateModified, GcdsDateModifiedExample>("date-modified", "Date modified", "Date de modification", "date-modified", "date-de-modification", DocsCategory.Data,
             "date-modified", "date-de-modification", "<GcdsDateModified>2026-08-26</GcdsDateModified>", "<GcdsDateModified>2026-08-26</GcdsDateModified>", []),
         D<GcdsDetails, GcdsDetailsExample>("details", "Details", "Détails", "details", "details", DocsCategory.Layout,

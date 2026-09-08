@@ -7,7 +7,7 @@
 
 Thin, idiomatic Blazor wrappers for the official [GC Design System (GCDS) components](https://design-system.canada.ca/en/). The library maps Razor parameters and events to the upstream web components; it does not reimplement their markup or styles.
 
-This version targets **.NET 10** and pins `@gcds-core/components` **1.5.0**.
+This version targets **.NET 10** and pins `@gcds-core/components` **1.6.0**.
 
 ## What is included
 
@@ -59,10 +59,12 @@ Component parameters use PascalCase and are emitted as the corresponding kebab-c
     Scheduled maintenance begins at 8 p.m.
 </GcdsAlert>
 
-<GcdsCard CardTitle="Application guide"
+<GcdsCard CardTitle="GC application guide"
           CardTitleTag="h2"
           Href="/guide"
-          Description="Learn how to submit an application." />
+          Description="Learn how to submit an application.">
+    <span slot="title"><abbr title="Government of Canada">GC</abbr> application guide</span>
+</GcdsCard>
 
 <GcdsBreadcrumbs>
     <GcdsBreadcrumbsItem Href="/">Home</GcdsBreadcrumbsItem>
@@ -71,6 +73,7 @@ Component parameters use PascalCase and are emitted as the corresponding kebab-c
 ```
 
 Use `AdditionalAttributes` for native attributes or upstream GCDS attributes that do not yet have a typed parameter.
+Named slots can be supplied as child markup. The card's `title` slot accepts rich content while `CardTitle` provides its text fallback.
 
 ## Forms and validation
 
@@ -78,6 +81,8 @@ The form wrappers derive from Blazor's `InputBase<TValue>`, so they support `@bi
 
 - `GcdsInput`, `GcdsSelect`, `GcdsTextarea`, `GcdsRadios`, `GcdsDateInput`, and `GcdsSearch` bind to `string?`.
 - `GcdsCheckboxes` and `GcdsFileUploader` bind to `string[]?`.
+
+`GcdsDateInput.Autocomplete` supports the upstream `on`, `off`, `bday`, and `cc-exp` values.
 
 ```razor
 <EditForm Model="model" OnValidSubmit="Save">
@@ -104,6 +109,11 @@ The form wrappers derive from Blazor's `InputBase<TValue>`, so they support `@bi
                   Label="Summary"
                   Required
                   @bind-Value="model.Summary" />
+
+    <GcdsDateInput Name="birth-date"
+                   Legend="Birth date"
+                   Autocomplete="bday"
+                   @bind-Value="model.BirthDate" />
 
     <GcdsButton Type="GcdsButtonType.Submit">Save</GcdsButton>
 </EditForm>
