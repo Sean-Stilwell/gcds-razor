@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GcdsWrapper.Blazor\GcdsWrapper.Blazor.csproj" />
+    <ProjectReference Include="..\GcdsWrapper.Blazor.Markdown\GcdsWrapper.Blazor.Markdown.csproj" />
   </ItemGroup>
 
   <ItemGroup>

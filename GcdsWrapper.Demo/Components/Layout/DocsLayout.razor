@@ -11,7 +11,7 @@
     <Disclaimer IsFrench=@IsFrench />
 
     <GcdsGrid Columns="1fr" ColumnsTablet="320px minmax(0, 1fr)">
-        <DocsSideNavigation Language="@Language" Current="@Current" />
+        <DocsSideNavigation Language="@Language" Current="@Current" IsMarkdown="@IsMarkdown" />
         <main id="main-content" class="docs-content">
             @Body
         </main>
@@ -23,9 +23,12 @@
 @code {
     private DocsLanguage Language => DocsLanguageExtensions.FromPath(Navigation.ToBaseRelativePath(Navigation.Uri));
     private bool IsFrench => Language == DocsLanguage.French;
+    private bool IsMarkdown => Navigation.ToBaseRelativePath(Navigation.Uri).Trim('/').EndsWith("/markdown", StringComparison.OrdinalIgnoreCase);
     private DocsComponentDescriptor? Current => DocsCatalog.FindByPath(Navigation.ToBaseRelativePath(Navigation.Uri));
     private string LanguageHref => Navigation.ToAbsoluteUri(
-        (Current?.RouteFor(OppositeLanguage) ?? OppositeLanguage.ComponentsRoute()).TrimStart('/')).ToString();
+        (IsMarkdown
+            ? OppositeLanguage.MarkdownRoute()
+            : Current?.RouteFor(OppositeLanguage) ?? OppositeLanguage.ComponentsRoute()).TrimStart('/')).ToString();
     private DocsLanguage OppositeLanguage => Language == DocsLanguage.French ? DocsLanguage.English : DocsLanguage.French;
 
     protected override void OnInitialized() => Navigation.LocationChanged += HandleLocationChanged;

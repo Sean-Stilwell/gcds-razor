@@ -1,0 +1,185 @@
+@page "/en/markdown"
+@page "/fr/markdown"
+@implements IDisposable
+@inject NavigationManager Navigation
+
+<PageTitle>@(IsFrench ? "Markdown avec GCDS" : "GCDS Markdown")</PageTitle>
+
+<GcdsHeading Tag="h1">@(IsFrench ? "Markdown avec GCDS" : "GCDS Markdown")</GcdsHeading>
+<GcdsText>
+    @(IsFrench
+        ? "GcdsWrapper.Blazor.Markdown transforme du texte Markdown en composants du Système de design GC et en HTML sémantique accessible."
+        : "GcdsWrapper.Blazor.Markdown turns Markdown text into GC Design System components and accessible semantic HTML.")
+</GcdsText>
+
+<GcdsButton Type="GcdsButtonType.Link" Href="@NuGetUrl" Target="_blank" Rel="noopener noreferrer">
+    NuGet
+</GcdsButton>
+
+<GcdsHeading Tag="h2">@(IsFrench ? "Installation" : "Installation")</GcdsHeading>
+<CodeBlock Language="@Language" Code="@InstallSnippet" />
+<CodeBlock Language="@Language" Code="@ImportsSnippet" />
+<GcdsText>
+    @(IsFrench
+        ? "Rendez aussi GcdsAssets une seule fois près de la racine de l’application afin de charger les ressources officielles du Système de design GC."
+        : "Also render GcdsAssets once near the application root to load the official GC Design System assets.")
+</GcdsText>
+<CodeBlock Language="@Language" Code="<GcdsAssets />" />
+
+<GcdsHeading Tag="h2">@(IsFrench ? "Exemple interactif" : "Live example")</GcdsHeading>
+<div class="docs-preview">
+    <GcdsMarkdown Value="@ExampleMarkdown"
+                  HeadingLevelOffset="1"
+                  OnLinkClick="HandleLinkClick" />
+</div>
+<GcdsText role="status" aria-live="polite">@LastLinkMessage</GcdsText>
+
+<GcdsHeading Tag="h2">@(IsFrench ? "Utilisation Razor" : "Razor usage")</GcdsHeading>
+<CodeBlock Language="@Language" Code="@UsageSnippet" />
+
+<GcdsHeading Tag="h2">@(IsFrench ? "Paramètres" : "Parameters")</GcdsHeading>
+<table class="docs-api">
+    <thead>
+        <tr>
+            <th scope="col"><GcdsText>@(IsFrench ? "Nom" : "Name")</GcdsText></th>
+            <th scope="col"><GcdsText>Type</GcdsText></th>
+            <th scope="col"><GcdsText>@(IsFrench ? "Valeur par défaut" : "Default")</GcdsText></th>
+            <th scope="col"><GcdsText>@(IsFrench ? "Description" : "Description")</GcdsText></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><GcdsText>Value</GcdsText></td>
+            <td><GcdsText>string?</GcdsText></td>
+            <td><GcdsText>null</GcdsText></td>
+            <td><GcdsText>@(IsFrench ? "Texte Markdown à rendre." : "Markdown text to render.")</GcdsText></td>
+        </tr>
+        <tr>
+            <td><GcdsText>HeadingLevelOffset</GcdsText></td>
+            <td><GcdsText>int</GcdsText></td>
+            <td><GcdsText>0</GcdsText></td>
+            <td><GcdsText>@(IsFrench ? "Décale les titres de 0 à 5 niveaux, jusqu’à h6." : "Shifts headings by 0–5 levels, capped at h6.")</GcdsText></td>
+        </tr>
+        <tr>
+            <td><GcdsText>AllowHtml</GcdsText></td>
+            <td><GcdsText>bool</GcdsText></td>
+            <td><GcdsText>false</GcdsText></td>
+            <td><GcdsText>@(IsFrench ? "Autorise le HTML brut provenant uniquement d’une source fiable." : "Allows raw HTML from a trusted source only.")</GcdsText></td>
+        </tr>
+        <tr>
+            <td><GcdsText>OnLinkClick</GcdsText></td>
+            <td><GcdsText>EventCallback&lt;GcdsMarkdownLinkEventArgs&gt;</GcdsText></td>
+            <td><GcdsText>—</GcdsText></td>
+            <td><GcdsText>@(IsFrench ? "Observe les sélections de liens sans annuler la navigation." : "Observes link selections without cancelling navigation.")</GcdsText></td>
+        </tr>
+    </tbody>
+</table>
+
+<GcdsNotice NoticeRole="warning" NoticeTitle="@(IsFrench ? "Sécurité du HTML brut" : "Raw HTML security")" NoticeTitleTag="h2">
+    <GcdsText>
+        @(IsFrench
+            ? "Le HTML brut est ignoré par défaut. AllowHtml émet le balisage sans nettoyage; activez-le seulement pour du contenu entièrement fiable."
+            : "Raw HTML is ignored by default. AllowHtml emits markup without sanitization; enable it only for completely trusted content.")
+    </GcdsText>
+</GcdsNotice>
+
+@code {
+    private DocsLanguage Language => DocsLanguageExtensions.FromPath(Navigation.ToBaseRelativePath(Navigation.Uri));
+    private bool IsFrench => Language == DocsLanguage.French;
+    private string? lastLink;
+    private string LastLinkMessage => string.IsNullOrEmpty(lastLink)
+        ? string.Empty
+        : IsFrench ? $"Dernier lien sélectionné : {lastLink}" : $"Last selected link: {lastLink}";
+
+    private string ExampleMarkdown => IsFrench
+        ? """
+            # Guide de service
+
+            Consultez les **instructions de demande** avant de [commencer](/fr/demande).
+
+            | Étape | État |
+            | --- | --- |
+            | Profil | Terminé |
+            | Envoi | À faire |
+
+            - [x] Lire le guide
+            - [ ] Envoyer la demande
+            """
+        : """
+            # Service guide
+
+            Read the **application instructions** before [starting](/en/apply).
+
+            | Step | Status |
+            | --- | --- |
+            | Profile | Complete |
+            | Submit | To do |
+
+            - [x] Read the guide
+            - [ ] Submit the application
+            """;
+
+    private string UsageSnippet => IsFrench
+        ? """"
+            <GcdsMarkdown Value="@markdown"
+                          HeadingLevelOffset="1"
+                          OnLinkClick="HandleLinkClick" />
+
+            @code {
+                private const string markdown = """
+                    # Guide de service
+
+                    Consultez les **instructions de demande** avant de [commencer](/fr/demande).
+
+                    | Étape | État |
+                    | --- | --- |
+                    | Profil | Terminé |
+                    | Envoi | À faire |
+
+                    - [x] Lire le guide
+                    - [ ] Envoyer la demande
+                    """;
+
+                private void HandleLinkClick(GcdsMarkdownLinkEventArgs args)
+                {
+                    // Observez le lien sélectionné sans annuler la navigation.
+                }
+            }
+            """"
+        : """"
+            <GcdsMarkdown Value="@markdown"
+                          HeadingLevelOffset="1"
+                          OnLinkClick="HandleLinkClick" />
+
+            @code {
+                private const string markdown = """
+                    # Service guide
+
+                    Read the **application instructions** before [starting](/en/apply).
+
+                    | Step | Status |
+                    | --- | --- |
+                    | Profile | Complete |
+                    | Submit | To do |
+
+                    - [x] Read the guide
+                    - [ ] Submit the application
+                    """;
+
+                private void HandleLinkClick(GcdsMarkdownLinkEventArgs args)
+                {
+                    // Observe the selected link without cancelling navigation.
+                }
+            }
+            """";
+
+    private void HandleLinkClick(GcdsMarkdownLinkEventArgs args) => lastLink = args.Href;
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs args) => InvokeAsync(StateHasChanged);
+
+    protected override void OnInitialized() => Navigation.LocationChanged += HandleLocationChanged;
+    public void Dispose() => Navigation.LocationChanged -= HandleLocationChanged;
+
+    private const string InstallSnippet = "dotnet add YourApp/YourApp.csproj package GcdsWrapper.Blazor.Markdown";
+    private const string ImportsSnippet = "@using GcdsWrapper.Blazor\n@using GcdsWrapper.Blazor.Markdown";
+    private const string NuGetUrl = "https://www.nuget.org/packages/GcdsWrapper.Blazor.Markdown/";
+}

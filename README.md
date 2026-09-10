@@ -9,6 +9,8 @@ Thin, idiomatic Blazor wrappers for the official [GC Design System (GCDS) compon
 
 This version targets **.NET 10** and pins `@gcds-core/components` **1.6.0**.
 
+The repository also contains `GcdsWrapper.Blazor.Markdown`, an independently versioned package that renders Markdown using these wrappers and accessible semantic HTML.
+
 ## What is included
 
 - A Blazor component for every custom element in the pinned GCDS release
@@ -151,12 +153,39 @@ dotnet run --project GcdsWrapper.Demo/GcdsWrapper.Demo.csproj
 
 Open `/en/components` or `/fr/composants`. Each component page provides a live example, Razor usage, reflected parameter metadata, supported events, and a link to the matching official GCDS guidance.
 
+The Markdown package is documented at `/en/markdown` and `/fr/markdown`.
+
+## Markdown package
+
+Install the optional Markdown renderer separately:
+
+```shell
+dotnet add YourApp/YourApp.csproj package GcdsWrapper.Blazor.Markdown
+```
+
+Add `@using GcdsWrapper.Blazor.Markdown` to `_Imports.razor`, continue rendering `<GcdsAssets />` once, and pass Markdown text to the component:
+
+```razor
+<GcdsMarkdown Value="@markdown" HeadingLevelOffset="1" />
+
+@code {
+    private const string markdown = """
+        # Service guide
+
+        Read the **application instructions** before [starting](/apply).
+        """;
+}
+```
+
+Raw HTML is ignored unless `AllowHtml` is explicitly enabled. Enabled HTML is not sanitized and must only come from a completely trusted source.
+
 ## Development
 
 ```shell
 dotnet restore GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj
 dotnet build GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj
 dotnet test --project GcdsWrapper.Blazor.Tests/GcdsWrapper.Blazor.Tests.csproj
+dotnet test --project GcdsWrapper.Blazor.Markdown.Tests/GcdsWrapper.Blazor.Markdown.Tests.csproj
 dotnet format GcdsWrapper.Blazor/GcdsWrapper.Blazor.csproj --verify-no-changes
 ```
 
@@ -176,6 +205,13 @@ git push origin v0.1.1
 ```
 
 The release workflow tests and verifies the package before publishing it to NuGet.org. After publication succeeds, it creates a GitHub Release with generated release notes and attaches the `.nupkg` and `.snupkg` files. Tags with a prerelease suffix, such as `v0.2.0-beta.1`, publish prerelease packages and are marked as prereleases on GitHub.
+
+Markdown releases use an independent version from `GcdsWrapper.Blazor.Markdown/GcdsWrapper.Blazor.Markdown.csproj` and `markdown-v*.*.*` tags, for example:
+
+```shell
+git tag markdown-v0.1.0
+git push origin markdown-v0.1.0
+```
 
 The GitHub Pages workflow publishes the static demo from the released commit after the NuGet release workflow succeeds. It can also be run manually when a documentation-only deployment is needed.
 

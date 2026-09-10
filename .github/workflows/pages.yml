@@ -2,7 +2,7 @@ name: Deploy documentation to GitHub Pages
 
 on:
   workflow_run:
-    workflows: ["Publish NuGet package"]
+    workflows: ["Publish NuGet package", "Publish GCDS Markdown NuGet package"]
     types: [completed]
   workflow_dispatch:
 
