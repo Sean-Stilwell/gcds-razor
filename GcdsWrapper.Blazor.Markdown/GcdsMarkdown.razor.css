@@ -1,0 +1,51 @@
+.gcds-markdown {
+    display: block;
+}
+
+.gcds-markdown ::deep blockquote {
+    border-inline-start: 0.375rem solid var(--gcds-border-default, #7d828b);
+    margin-inline: 0;
+    padding-inline-start: 1rem;
+}
+
+.gcds-markdown ::deep .gcds-markdown-table-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.gcds-markdown ::deep table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.gcds-markdown ::deep th,
+.gcds-markdown ::deep td {
+    border: 1px solid var(--gcds-border-default, #7d828b);
+    padding: 0.75rem;
+    text-align: start;
+    vertical-align: top;
+}
+
+.gcds-markdown ::deep th {
+    background: var(--gcds-bg-light, #f1f2f3);
+}
+
+.gcds-markdown ::deep pre {
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 1rem;
+    background: var(--gcds-bg-light, #f1f2f3);
+}
+
+.gcds-markdown ::deep code {
+    font-family: monospace;
+}
+
+.gcds-markdown ::deep img {
+    height: auto;
+    max-width: 100%;
+}
+
+.gcds-markdown ::deep input[type="checkbox"] {
+    margin-inline-end: 0.5rem;
+}

@@ -3,9 +3,13 @@
 <nav aria-label="@(Language == DocsLanguage.French ? "Documentation des composants" : "Component documentation")">
     <GcdsSideNav Label="@(Language == DocsLanguage.French ? "Composants" : "Components")">
         <GcdsNavLink Href="@SiteHref(Language.ComponentsRoute())"
-                     Current="@(Current is null)"
+                     Current="@(Current is null && !IsMarkdown)"
                      AdditionalAttributes="@HomeSlot">
             @(Language == DocsLanguage.French ? "Tous les composants" : "All components")
+        </GcdsNavLink>
+
+        <GcdsNavLink Href="@SiteHref(Language.MarkdownRoute())" Current="@IsMarkdown">
+            Markdown
         </GcdsNavLink>
 
         @foreach (var category in Enum.GetValues<DocsCategory>())
@@ -33,6 +37,7 @@
 
     [Parameter] public DocsLanguage Language { get; set; }
     [Parameter] public DocsComponentDescriptor? Current { get; set; }
+    [Parameter] public bool IsMarkdown { get; set; }
 
     private string SiteHref(string route) => Navigation.ToAbsoluteUri(route.TrimStart('/')).ToString();
 }

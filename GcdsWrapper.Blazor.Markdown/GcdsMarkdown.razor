@@ -1,0 +1,391 @@
+@namespace GcdsWrapper.Blazor.Markdown
+@using Markdig
+@using Markdig.Extensions.AutoLinks
+@using Markdig.Extensions.Tables
+@using Markdig.Extensions.TaskLists
+@using Markdig.Renderers.Html
+@using Markdig.Syntax
+@using Markdig.Syntax.Inlines
+@using Microsoft.AspNetCore.Components.Rendering
+@inject NavigationManager Navigation
+
+<article class="@RootClass" @attributes="RootAttributes">@DocumentContent</article>
+
+@code {
+    private static readonly MarkdownPipeline Pipeline = new MarkdownPipelineBuilder()
+        .UseAutoIdentifiers()
+        .UseAutoLinks()
+        .UsePipeTables()
+        .UseTaskLists()
+        .UseEmphasisExtras()
+        .Build();
+
+    private MarkdownDocument? document;
+
+    /// <summary>The Markdown source text to render.</summary>
+    [Parameter] public string? Value { get; set; }
+
+    /// <summary>Whether trusted raw HTML in the Markdown source may be rendered.</summary>
+    [Parameter] public bool AllowHtml { get; set; }
+
+    /// <summary>The number of levels added to Markdown headings, capped at <c>h6</c>.</summary>
+    [Parameter] public int HeadingLevelOffset { get; set; }
+
+    /// <summary>Raised when a rendered Markdown link is selected. Normal navigation is not cancelled.</summary>
+    [Parameter] public EventCallback<GcdsMarkdownLinkEventArgs> OnLinkClick { get; set; }
+
+    /// <summary>Additional attributes applied to the root <c>article</c> element.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private RenderFragment DocumentContent => builder =>
+    {
+        if (document is null) return;
+
+        var sequence = 0;
+        RenderBlocks(builder, ref sequence, document, topLevel: true);
+    };
+
+    private string RootClass
+    {
+        get
+        {
+            var additionalClass = AdditionalAttributes is not null &&
+                AdditionalAttributes.TryGetValue("class", out var value)
+                    ? Convert.ToString(value)
+                    : null;
+            return string.IsNullOrWhiteSpace(additionalClass)
+                ? "gcds-markdown"
+                : $"gcds-markdown {additionalClass}";
+        }
+    }
+
+    private IReadOnlyDictionary<string, object>? RootAttributes
+    {
+        get
+        {
+            if (AdditionalAttributes is null || !AdditionalAttributes.ContainsKey("class"))
+                return AdditionalAttributes;
+
+            return AdditionalAttributes
+                .Where(attribute => !string.Equals(attribute.Key, "class", StringComparison.OrdinalIgnoreCase))
+                .ToDictionary(attribute => attribute.Key, attribute => attribute.Value);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (HeadingLevelOffset is < 0 or > 5)
+            throw new ArgumentOutOfRangeException(nameof(HeadingLevelOffset), HeadingLevelOffset,
+                "HeadingLevelOffset must be between 0 and 5.");
+
+        document = string.IsNullOrEmpty(Value) ? null : Markdown.Parse(Value, Pipeline);
+    }
+
+    private void RenderBlocks(RenderTreeBuilder builder, ref int sequence, ContainerBlock blocks, bool topLevel)
+    {
+        foreach (var block in blocks)
+        {
+            switch (block)
+            {
+                case HeadingBlock heading:
+                    RenderHeading(builder, ref sequence, heading);
+                    break;
+                case ParagraphBlock paragraph:
+                    RenderParagraph(builder, ref sequence, paragraph, topLevel);
+                    break;
+                case QuoteBlock quote:
+                    builder.OpenElement(sequence++, "blockquote");
+                    RenderBlocks(builder, ref sequence, quote, topLevel: false);
+                    builder.CloseElement();
+                    break;
+                case ListBlock list:
+                    RenderList(builder, ref sequence, list);
+                    break;
+                case Table table:
+                    RenderTable(builder, ref sequence, table);
+                    break;
+                case FencedCodeBlock fencedCode:
+                    RenderCodeBlock(builder, ref sequence, fencedCode, fencedCode.Info?.ToString());
+                    break;
+                case CodeBlock code:
+                    RenderCodeBlock(builder, ref sequence, code, null);
+                    break;
+                case ThematicBreakBlock:
+                    builder.OpenElement(sequence++, "hr");
+                    builder.CloseElement();
+                    break;
+                case HtmlBlock html when AllowHtml:
+                    builder.AddMarkupContent(sequence++, html.Lines.ToString());
+                    break;
+            }
+        }
+    }
+
+    private void RenderHeading(RenderTreeBuilder builder, ref int sequence, HeadingBlock heading)
+    {
+        var level = Math.Min(heading.Level + HeadingLevelOffset, 6);
+        var attributes = heading.GetAttributes();
+        var id = attributes?.Id;
+
+        builder.OpenComponent<GcdsHeading>(sequence++);
+        builder.AddComponentParameter(sequence++, nameof(GcdsHeading.Tag), $"h{level}");
+        if (!string.IsNullOrWhiteSpace(id))
+        {
+            builder.AddComponentParameter(sequence++, nameof(GcdsHeading.AdditionalAttributes),
+                new Dictionary<string, object> { ["id"] = id });
+        }
+        builder.AddComponentParameter(sequence++, nameof(GcdsHeading.ChildContent), (RenderFragment)(contentBuilder =>
+        {
+            if (heading.Inline is null) return;
+            var childSequence = 0;
+            RenderInlines(contentBuilder, ref childSequence, heading.Inline);
+        }));
+        builder.CloseComponent();
+    }
+
+    private void RenderParagraph(
+        RenderTreeBuilder builder,
+        ref int sequence,
+        ParagraphBlock paragraph,
+        bool useGcdsText)
+    {
+        if (paragraph.Inline is null) return;
+
+        if (useGcdsText)
+        {
+            builder.OpenComponent<GcdsText>(sequence++);
+            builder.AddComponentParameter(sequence++, nameof(GcdsText.ChildContent), (RenderFragment)(contentBuilder =>
+            {
+                var childSequence = 0;
+                RenderInlines(contentBuilder, ref childSequence, paragraph.Inline);
+            }));
+            builder.CloseComponent();
+            return;
+        }
+
+        builder.OpenElement(sequence++, "p");
+        RenderInlines(builder, ref sequence, paragraph.Inline);
+        builder.CloseElement();
+    }
+
+    private void RenderList(RenderTreeBuilder builder, ref int sequence, ListBlock list)
+    {
+        builder.OpenElement(sequence++, list.IsOrdered ? "ol" : "ul");
+        if (list.IsOrdered && int.TryParse(list.OrderedStart, out var start) && start != 1)
+            builder.AddAttribute(sequence++, "start", start);
+
+        foreach (var item in list.OfType<ListItemBlock>())
+        {
+            builder.OpenElement(sequence++, "li");
+            RenderBlocks(builder, ref sequence, item, topLevel: false);
+            builder.CloseElement();
+        }
+        builder.CloseElement();
+    }
+
+    private void RenderTable(RenderTreeBuilder builder, ref int sequence, Table table)
+    {
+        builder.OpenElement(sequence++, "div");
+        builder.AddAttribute(sequence++, "class", "gcds-markdown-table-wrapper");
+        builder.OpenElement(sequence++, "table");
+
+        var rows = table.OfType<TableRow>().ToArray();
+        var headerRows = rows.TakeWhile(row => row.IsHeader).ToArray();
+        if (headerRows.Length > 0)
+        {
+            builder.OpenElement(sequence++, "thead");
+            foreach (var row in headerRows)
+                RenderTableRow(builder, ref sequence, row, header: true);
+            builder.CloseElement();
+        }
+
+        var bodyRows = rows.Skip(headerRows.Length).ToArray();
+        if (bodyRows.Length > 0)
+        {
+            builder.OpenElement(sequence++, "tbody");
+            foreach (var row in bodyRows)
+                RenderTableRow(builder, ref sequence, row, header: false);
+            builder.CloseElement();
+        }
+
+        builder.CloseElement();
+        builder.CloseElement();
+    }
+
+    private void RenderTableRow(RenderTreeBuilder builder, ref int sequence, TableRow row, bool header)
+    {
+        builder.OpenElement(sequence++, "tr");
+        foreach (var cell in row.OfType<TableCell>())
+        {
+            builder.OpenElement(sequence++, header ? "th" : "td");
+            if (header) builder.AddAttribute(sequence++, "scope", "col");
+            RenderBlocks(builder, ref sequence, cell, topLevel: false);
+            builder.CloseElement();
+        }
+        builder.CloseElement();
+    }
+
+    private static void RenderCodeBlock(
+        RenderTreeBuilder builder,
+        ref int sequence,
+        CodeBlock code,
+        string? languageInfo)
+    {
+        builder.OpenElement(sequence++, "pre");
+        builder.OpenElement(sequence++, "code");
+        var language = NormalizeLanguage(languageInfo);
+        if (language is not null)
+            builder.AddAttribute(sequence++, "class", $"language-{language}");
+        builder.AddContent(sequence++, code.Lines.ToString());
+        builder.CloseElement();
+        builder.CloseElement();
+    }
+
+    private void RenderInlines(RenderTreeBuilder builder, ref int sequence, ContainerInline inlines)
+    {
+        foreach (var inline in inlines)
+        {
+            switch (inline)
+            {
+                case LiteralInline literal:
+                    builder.AddContent(sequence++, literal.Content.ToString());
+                    break;
+                case CodeInline code:
+                    builder.OpenElement(sequence++, "code");
+                    builder.AddContent(sequence++, code.Content);
+                    builder.CloseElement();
+                    break;
+                case EmphasisInline emphasis:
+                    RenderEmphasis(builder, ref sequence, emphasis);
+                    break;
+                case LineBreakInline lineBreak:
+                    if (lineBreak.IsHard)
+                    {
+                        builder.OpenElement(sequence++, "br");
+                        builder.CloseElement();
+                    }
+                    else
+                    {
+                        builder.AddContent(sequence++, " ");
+                    }
+                    break;
+                case LinkInline link:
+                    RenderLink(builder, ref sequence, link);
+                    break;
+                case AutolinkInline autoLink:
+                    RenderAutoLink(builder, ref sequence, autoLink);
+                    break;
+                case TaskList task:
+                    builder.OpenElement(sequence++, "input");
+                    builder.AddAttribute(sequence++, "type", "checkbox");
+                    builder.AddAttribute(sequence++, "disabled", true);
+                    if (task.Checked) builder.AddAttribute(sequence++, "checked", true);
+                    builder.AddAttribute(sequence++, "aria-label", task.Checked ? "Completed task" : "Incomplete task");
+                    builder.CloseElement();
+                    break;
+                case HtmlInline html when AllowHtml:
+                    builder.AddMarkupContent(sequence++, html.Tag);
+                    break;
+                case ContainerInline container:
+                    RenderInlines(builder, ref sequence, container);
+                    break;
+            }
+        }
+    }
+
+    private void RenderEmphasis(RenderTreeBuilder builder, ref int sequence, EmphasisInline emphasis)
+    {
+        var element = emphasis.DelimiterChar == '~' && emphasis.DelimiterCount == 2
+            ? "del"
+            : emphasis.DelimiterCount == 2 ? "strong" : "em";
+        builder.OpenElement(sequence++, element);
+        RenderInlines(builder, ref sequence, emphasis);
+        builder.CloseElement();
+    }
+
+    private void RenderLink(RenderTreeBuilder builder, ref int sequence, LinkInline link)
+    {
+        var href = link.Url ?? string.Empty;
+        if (link.IsImage)
+        {
+            builder.OpenElement(sequence++, "img");
+            builder.AddAttribute(sequence++, "src", href);
+            builder.AddAttribute(sequence++, "alt", PlainText(link));
+            if (!string.IsNullOrWhiteSpace(link.Title)) builder.AddAttribute(sequence++, "title", link.Title);
+            builder.CloseElement();
+            return;
+        }
+
+        RenderGcdsLink(builder, ref sequence, href, link.Title, contentBuilder =>
+        {
+            var childSequence = 0;
+            RenderInlines(contentBuilder, ref childSequence, link);
+        });
+    }
+
+    private void RenderAutoLink(RenderTreeBuilder builder, ref int sequence, AutolinkInline link)
+    {
+        var href = link.IsEmail ? $"mailto:{link.Url}" : link.Url;
+        RenderGcdsLink(builder, ref sequence, href, null,
+            contentBuilder => contentBuilder.AddContent(0, link.Url));
+    }
+
+    private void RenderGcdsLink(
+        RenderTreeBuilder builder,
+        ref int sequence,
+        string href,
+        string? title,
+        RenderFragment childContent)
+    {
+        var isExternal = IsExternalHttpLink(href);
+        builder.OpenComponent<GcdsLink>(sequence++);
+        builder.AddComponentParameter(sequence++, nameof(GcdsLink.Href), href);
+        builder.AddComponentParameter(sequence++, nameof(GcdsLink.External), isExternal);
+        if (isExternal)
+        {
+            builder.AddComponentParameter(sequence++, nameof(GcdsLink.Target), "_blank");
+            builder.AddComponentParameter(sequence++, nameof(GcdsLink.Rel), "noopener noreferrer");
+        }
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            builder.AddComponentParameter(sequence++, nameof(GcdsLink.AdditionalAttributes),
+                new Dictionary<string, object> { ["title"] = title });
+        }
+        if (OnLinkClick.HasDelegate)
+        {
+            var eventArgs = new GcdsMarkdownLinkEventArgs(href, title, isExternal);
+            builder.AddComponentParameter(sequence++, nameof(GcdsLink.OnClick),
+                EventCallback.Factory.Create<GcdsEventArgs>(this, _ => OnLinkClick.InvokeAsync(eventArgs)));
+        }
+        builder.AddComponentParameter(sequence++, nameof(GcdsLink.ChildContent), childContent);
+        builder.CloseComponent();
+    }
+
+    private bool IsExternalHttpLink(string href)
+    {
+        if (!Uri.TryCreate(href, UriKind.Absolute, out var target))
+        {
+            if (!href.StartsWith("//", StringComparison.Ordinal)) return false;
+            target = new Uri(new Uri(Navigation.BaseUri), href);
+        }
+
+        if (target.Scheme is not ("http" or "https")) return false;
+        var origin = new Uri(Navigation.BaseUri);
+        return !string.Equals(target.Scheme, origin.Scheme, StringComparison.OrdinalIgnoreCase) ||
+            !string.Equals(target.Host, origin.Host, StringComparison.OrdinalIgnoreCase) ||
+            target.Port != origin.Port;
+    }
+
+    private static string? NormalizeLanguage(string? languageInfo)
+    {
+        if (string.IsNullOrWhiteSpace(languageInfo)) return null;
+        var value = languageInfo.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)[0];
+        var normalized = new string(value.Where(character =>
+            char.IsLetterOrDigit(character) || character is '-' or '_' or '+' or '#' or '.').ToArray());
+        return normalized.Length == 0 ? null : normalized;
+    }
+
+    private static string PlainText(ContainerInline inlines) => string.Concat(
+        inlines.Descendants<LiteralInline>().Select(literal => literal.Content.ToString()));
+}

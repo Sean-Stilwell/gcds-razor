@@ -123,4 +123,7 @@ internal static class DocsLanguageExtensions
 
     public static string ComponentsRoute(this DocsLanguage language) =>
         language == DocsLanguage.French ? "/fr/composants" : "/en/components";
+
+    public static string MarkdownRoute(this DocsLanguage language) =>
+        language == DocsLanguage.French ? "/fr/markdown" : "/en/markdown";
 }
