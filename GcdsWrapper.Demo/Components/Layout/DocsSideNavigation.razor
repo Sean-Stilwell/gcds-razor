@@ -8,10 +8,6 @@
             @(Language == DocsLanguage.French ? "Tous les composants" : "All components")
         </GcdsNavLink>
 
-        <GcdsNavLink Href="@SiteHref(Language.MarkdownRoute())" Current="@IsMarkdown">
-            Markdown
-        </GcdsNavLink>
-
         @foreach (var category in Enum.GetValues<DocsCategory>())
         {
             var categoryName = DocsCatalog.CategoryName(category).Get(Language);
@@ -28,6 +24,10 @@
                 }
             </GcdsNavGroup>
         }
+
+        <GcdsNavLink Href="@SiteHref(Language.MarkdownRoute())" Current="@IsMarkdown">
+            Markdown
+        </GcdsNavLink>
     </GcdsSideNav>
 </nav>
 

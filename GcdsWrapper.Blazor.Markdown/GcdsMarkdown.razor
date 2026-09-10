@@ -178,7 +178,7 @@
         foreach (var item in list.OfType<ListItemBlock>())
         {
             builder.OpenElement(sequence++, "li");
-            RenderBlocks(builder, ref sequence, item, topLevel: false);
+            RenderBlocks(builder, ref sequence, item, topLevel: true);
             builder.CloseElement();
         }
         builder.CloseElement();
@@ -220,7 +220,7 @@
         {
             builder.OpenElement(sequence++, header ? "th" : "td");
             if (header) builder.AddAttribute(sequence++, "scope", "col");
-            RenderBlocks(builder, ref sequence, cell, topLevel: false);
+            RenderBlocks(builder, ref sequence, cell, topLevel: true);
             builder.CloseElement();
         }
         builder.CloseElement();

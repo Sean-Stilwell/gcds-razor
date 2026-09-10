@@ -41,6 +41,7 @@ public sealed class GcdsMarkdownTests
         Assert.Equal("Important information.", component.Find("blockquote p").TextContent.Trim());
         Assert.Equal(2, component.FindAll("article > ul > li").Count);
         Assert.Single(component.FindAll("article > ul > li > ul"));
+        Assert.All(component.FindAll("article li"), item => Assert.NotNull(item.QuerySelector(":scope > gcds-text")));
         Assert.Equal("1", component.Find("article > ol").GetAttribute("start") ?? "1");
         Assert.Single(component.FindAll("hr"));
     }
@@ -68,6 +69,7 @@ public sealed class GcdsMarkdownTests
             .Add(item => item.Value, markdown));
 
         Assert.Equal(["Name", "Status"], component.FindAll("thead th").Select(cell => cell.TextContent.Trim()));
+        Assert.All(component.FindAll("th, td"), cell => Assert.NotNull(cell.QuerySelector(":scope > gcds-text")));
         Assert.Equal("Alpha", component.Find("tbody strong").TextContent);
         Assert.Equal("/status", component.Find("tbody gcds-link").GetAttribute("href"));
         var tasks = component.FindAll("input[type='checkbox']");

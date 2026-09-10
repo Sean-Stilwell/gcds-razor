@@ -120,16 +120,58 @@
             """;
 
     private string UsageSnippet => IsFrench
-        ? """
+        ? """"
             <GcdsMarkdown Value="@markdown"
                           HeadingLevelOffset="1"
                           OnLinkClick="HandleLinkClick" />
-            """
-        : """
+
+            @code {
+                private const string markdown = """
+                    # Guide de service
+
+                    Consultez les **instructions de demande** avant de [commencer](/fr/demande).
+
+                    | Étape | État |
+                    | --- | --- |
+                    | Profil | Terminé |
+                    | Envoi | À faire |
+
+                    - [x] Lire le guide
+                    - [ ] Envoyer la demande
+                    """;
+
+                private void HandleLinkClick(GcdsMarkdownLinkEventArgs args)
+                {
+                    // Observez le lien sélectionné sans annuler la navigation.
+                }
+            }
+            """"
+        : """"
             <GcdsMarkdown Value="@markdown"
                           HeadingLevelOffset="1"
                           OnLinkClick="HandleLinkClick" />
-            """;
+
+            @code {
+                private const string markdown = """
+                    # Service guide
+
+                    Read the **application instructions** before [starting](/en/apply).
+
+                    | Step | Status |
+                    | --- | --- |
+                    | Profile | Complete |
+                    | Submit | To do |
+
+                    - [x] Read the guide
+                    - [ ] Submit the application
+                    """;
+
+                private void HandleLinkClick(GcdsMarkdownLinkEventArgs args)
+                {
+                    // Observe the selected link without cancelling navigation.
+                }
+            }
+            """";
 
     private void HandleLinkClick(GcdsMarkdownLinkEventArgs args) => lastLink = args.Href;
     private void HandleLocationChanged(object? sender, LocationChangedEventArgs args) => InvokeAsync(StateHasChanged);

@@ -29,6 +29,12 @@ public sealed class MarkdownDocsTests
         Assert.Contains(expectedWarning, page.Markup);
         Assert.Contains("HeadingLevelOffset", page.Markup);
         Assert.Contains("OnLinkClick", page.Markup);
+        Assert.Contains(page.FindAll(".docs-code code"), code =>
+            code.TextContent.Contains("private const string markdown", StringComparison.Ordinal));
+        Assert.Contains(page.FindAll(".docs-code code"), code =>
+            code.TextContent.Contains(IsFrenchRoute(route) ? "| Étape | État |" : "| Step | Status |", StringComparison.Ordinal) &&
+            code.TextContent.Contains(IsFrenchRoute(route) ? "- [x] Lire le guide" : "- [x] Read the guide", StringComparison.Ordinal) &&
+            code.TextContent.Contains(IsFrenchRoute(route) ? "- [ ] Envoyer la demande" : "- [ ] Submit the application", StringComparison.Ordinal));
     }
 
     [Theory]
@@ -47,6 +53,7 @@ public sealed class MarkdownDocsTests
         var markdownLink = layout.FindAll("gcds-nav-link")
             .Single(link => link.TextContent.Trim() == "Markdown");
         Assert.Equal("true", markdownLink.GetAttribute("current"));
+        Assert.Equal("Markdown", layout.FindAll("gcds-side-nav gcds-nav-link").Last().TextContent.Trim());
     }
 
     private static BunitContext CreateContext()
@@ -55,4 +62,6 @@ public sealed class MarkdownDocsTests
         context.JSInterop.Mode = JSRuntimeMode.Loose;
         return context;
     }
+
+    private static bool IsFrenchRoute(string route) => route.StartsWith("fr/", StringComparison.Ordinal);
 }

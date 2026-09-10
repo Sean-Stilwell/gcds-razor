@@ -167,6 +167,14 @@ Add `@using GcdsWrapper.Blazor.Markdown` to `_Imports.razor`, continue rendering
 
 ```razor
 <GcdsMarkdown Value="@markdown" HeadingLevelOffset="1" />
+
+@code {
+    private const string markdown = """
+        # Service guide
+
+        Read the **application instructions** before [starting](/apply).
+        """;
+}
 ```
 
 Raw HTML is ignored unless `AllowHtml` is explicitly enabled. Enabled HTML is not sanitized and must only come from a completely trusted source.
