@@ -233,6 +233,7 @@ public sealed class GcdsPagination : GcdsComponentBase
     [Parameter, EditorRequired] public string Label { get; set; } = default!;
     [Parameter] public int? CurrentPage { get; set; }
     [Parameter] public string? Display { get; set; }
+    [Parameter] public string? Lang { get; set; }
     [Parameter] public string? NextHref { get; set; }
     [Parameter] public string? NextLabel { get; set; }
     [Parameter] public string? PreviousHref { get; set; }
@@ -273,6 +274,7 @@ public sealed class GcdsStepper : GcdsComponentBase
     protected override string TagName => "gcds-stepper";
     [Parameter, EditorRequired] public int CurrentStep { get; set; }
     [Parameter, EditorRequired] public int TotalSteps { get; set; }
+    [Parameter] public string? Lang { get; set; }
     [Parameter] public string? Tag { get; set; }
 }
 

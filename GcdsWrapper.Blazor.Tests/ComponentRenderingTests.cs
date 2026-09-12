@@ -99,4 +99,24 @@ public sealed class ComponentRenderingTests
 
         Assert.Equal(language, component.Find("gcds-topic-menu").GetAttribute("lang"));
     }
+
+    [Theory]
+    [InlineData("en")]
+    [InlineData("fr")]
+    public void PaginationAndStepper_RenderSelectedLanguage(string language)
+    {
+        using var context = new BunitContext();
+        context.JSInterop.Mode = JSRuntimeMode.Loose;
+
+        var pagination = context.Render<GcdsPagination>(parameters => parameters
+            .Add(item => item.Label, "Results")
+            .Add(item => item.Lang, language));
+        var stepper = context.Render<GcdsStepper>(parameters => parameters
+            .Add(item => item.CurrentStep, 2)
+            .Add(item => item.TotalSteps, 4)
+            .Add(item => item.Lang, language));
+
+        Assert.Equal(language, pagination.Find("gcds-pagination").GetAttribute("lang"));
+        Assert.Equal(language, stepper.Find("gcds-stepper").GetAttribute("lang"));
+    }
 }
