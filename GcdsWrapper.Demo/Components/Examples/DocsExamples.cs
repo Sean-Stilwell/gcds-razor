@@ -51,7 +51,17 @@ internal abstract class DocsExampleBase : ComponentBase
             "details" => New(("DetailsTitle", french ? "Renseignements supplémentaires" : "More information"),
                 ("ChildContent", FormattedText(french ? "Détails utiles." : "Helpful details."))),
             "error-message" => New(("ChildContent", Text(french ? "Saisissez une valeur." : "Enter a value."))),
-            "error-summary" => New(("ErrorLinks", new[] { new { href = "#name", label = french ? "Saisissez votre nom" : "Enter your name" } })),
+            "error-summary" => New(("ErrorLinks", french
+                ? new Dictionary<string, string>
+                {
+                    ["#nom"] = "Saisissez votre nom",
+                    ["#courriel"] = "Saisissez une adresse courriel valide"
+                }
+                : new Dictionary<string, string>
+                {
+                    ["#name"] = "Enter your name",
+                    ["#email"] = "Enter a valid email address"
+                })),
             "fieldset" => New(("Legend", french ? "Coordonnées" : "Contact information"), ("LegendSize", "h2"),
                 ("ChildContent", Text(french ? "Champs connexes" : "Related fields"))),
             "file-uploader" => New(("Id", "documents"), ("Name", "documents"), ("Label", french ? "Documents" : "Documents"),

@@ -39,6 +39,28 @@ internal static class DocsCatalog
             Autocomplete="bday"
             @bind-Value="model.Date" />
         """;
+    private const string ErrorSummarySnippetEnglish = """
+        <GcdsErrorSummary ErrorLinks="@errors" />
+
+        @code {
+            private readonly Dictionary<string, string> errors = new()
+            {
+                ["#name"] = "Enter your name",
+                ["#email"] = "Enter a valid email address"
+            };
+        }
+        """;
+    private const string ErrorSummarySnippetFrench = """
+        <GcdsErrorSummary ErrorLinks="@erreurs" />
+
+        @code {
+            private readonly Dictionary<string, string> erreurs = new()
+            {
+                ["#nom"] = "Saisissez votre nom",
+                ["#courriel"] = "Saisissez une adresse courriel valide"
+            };
+        }
+        """;
     private const string TableSnippetEnglish = """
         <GcdsTable Columns="@columns" Data="@rows" Sort />
 
@@ -285,7 +307,7 @@ internal static class DocsCatalog
         D<GcdsErrorMessage, GcdsErrorMessageExample>("error-message", "Error message", "Message d’erreur", "error-message", "message-derreur", DocsCategory.Feedback,
             "error-message", "message-derreur", "<GcdsErrorMessage>Enter a value.</GcdsErrorMessage>", "<GcdsErrorMessage>Saisissez une valeur.</GcdsErrorMessage>", []),
         D<GcdsErrorSummary, GcdsErrorSummaryExample>("error-summary", "Error summary", "Résumé des erreurs", "error-summary", "resume-de-erreurs", DocsCategory.Feedback,
-            "error-summary", "resume-de-erreurs", "<GcdsErrorSummary ErrorLinks=\"errors\" />", "<GcdsErrorSummary ErrorLinks=\"erreurs\" />", ["OnClick", "OnFocus", "OnBlur"]),
+            "error-summary", "resume-de-erreurs", ErrorSummarySnippetEnglish, ErrorSummarySnippetFrench, ["OnClick", "OnFocus", "OnBlur"]),
         D<GcdsFieldset, GcdsFieldsetExample>("fieldset", "Fieldset", "Groupe de champs", "fieldset", "groupe-champs", DocsCategory.Forms,
             "fieldset", "groupe-champs", "<GcdsFieldset Legend=\"Contact\" LegendSize=\"h2\">...</GcdsFieldset>", "<GcdsFieldset Legend=\"Coordonnées\" LegendSize=\"h2\">...</GcdsFieldset>", []),
         D<GcdsFileUploader, GcdsFileUploaderExample>("file-uploader", "File uploader", "Téléverseur de fichiers", "file-uploader", "televerseur-fichiers", DocsCategory.Forms,

@@ -249,6 +249,40 @@ public sealed class DocsCatalogTests
     }
 
     [Theory]
+    [InlineData(DocsLanguage.English, "#name", "Enter your name", "#email", "Enter a valid email address", "errors")]
+    [InlineData(DocsLanguage.French, "#nom", "Saisissez votre nom", "#courriel", "Saisissez une adresse courriel valide", "erreurs")]
+    public void ErrorSummaryExample_RendersTwoErrorsAndMatchingUsage(
+        DocsLanguage language,
+        string firstHref,
+        string firstLabel,
+        string secondHref,
+        string secondLabel,
+        string variableName)
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey("error-summary")!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(language));
+
+        var component = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, descriptor.SlugFor(language)));
+        var summary = component.Find(".docs-preview gcds-error-summary");
+        using var errorLinks = JsonDocument.Parse(summary.GetAttribute("error-links")!);
+        var snippet = descriptor.SnippetFor(language);
+
+        Assert.Equal(JsonValueKind.Object, errorLinks.RootElement.ValueKind);
+        Assert.Equal(2, errorLinks.RootElement.EnumerateObject().Count());
+        Assert.Equal(firstLabel, errorLinks.RootElement.GetProperty(firstHref).GetString());
+        Assert.Equal(secondLabel, errorLinks.RootElement.GetProperty(secondHref).GetString());
+        Assert.Contains($"ErrorLinks=\"@{variableName}\"", snippet);
+        Assert.Contains($"private readonly Dictionary<string, string> {variableName}", snippet);
+        Assert.Contains($"[\"{firstHref}\"]", snippet);
+        Assert.Contains($"[\"{secondHref}\"]", snippet);
+        Assert.Contains(firstLabel, snippet);
+        Assert.Contains(secondLabel, snippet);
+    }
+
+    [Theory]
     [InlineData(DocsLanguage.English, "GC application guide", "Government of Canada")]
     [InlineData(DocsLanguage.French, "Guide de demande du GC", "Gouvernement du Canada")]
     public void CardExample_RendersRichTitleSlotAndTextFallback(
