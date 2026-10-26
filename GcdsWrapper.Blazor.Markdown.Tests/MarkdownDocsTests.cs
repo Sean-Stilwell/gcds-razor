@@ -2,6 +2,7 @@ using Bunit;
 using GcdsWrapper.Demo.Components.Layout;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 using Xunit;
 using MarkdownPage = GcdsWrapper.Demo.Components.Pages.Markdown;
 
@@ -35,6 +36,20 @@ public sealed class MarkdownDocsTests
             code.TextContent.Contains(IsFrenchRoute(route) ? "| Étape | État |" : "| Step | Status |", StringComparison.Ordinal) &&
             code.TextContent.Contains(IsFrenchRoute(route) ? "- [x] Lire le guide" : "- [x] Read the guide", StringComparison.Ordinal) &&
             code.TextContent.Contains(IsFrenchRoute(route) ? "- [ ] Envoyer la demande" : "- [ ] Submit the application", StringComparison.Ordinal));
+
+        var table = page.Find("gcds-table");
+        using var columns = JsonDocument.Parse(table.GetAttribute("columns")!);
+        using var rows = JsonDocument.Parse(table.GetAttribute("data")!);
+        Assert.Equal(IsFrenchRoute(route) ? "Nom" : "Name",
+            columns.RootElement[0].GetProperty("header").GetString());
+        Assert.True(columns.RootElement[0].GetProperty("rowHeader").GetBoolean());
+        Assert.Equal(IsFrenchRoute(route) ? "Valeur par défaut" : "Default",
+            columns.RootElement[2].GetProperty("header").GetString());
+        Assert.Equal(4, rows.RootElement.GetArrayLength());
+        Assert.Equal("Value", rows.RootElement[0].GetProperty("name").GetString());
+        Assert.Equal(IsFrenchRoute(route) ? "Texte Markdown à rendre." : "Markdown text to render.",
+            rows.RootElement[0].GetProperty("description").GetString());
+        Assert.Empty(page.FindAll("table.docs-api"));
     }
 
     [Theory]

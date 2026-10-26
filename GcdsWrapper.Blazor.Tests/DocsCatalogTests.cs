@@ -167,6 +167,42 @@ public sealed class DocsCatalogTests
         Assert.Contains("https://design-system.canada.ca/en/components/input/", component.Markup);
     }
 
+    [Theory]
+    [InlineData(DocsLanguage.English, "Name", "Required", "Default", "Declared by", "Yes", "No")]
+    [InlineData(DocsLanguage.French, "Nom", "Obligatoire", "Valeur par défaut", "Déclaré par", "Oui", "Non")]
+    public void ComponentPage_RendersLocalizedApiWithGcdsTable(
+        DocsLanguage language,
+        string nameHeader,
+        string requiredHeader,
+        string defaultHeader,
+        string declaredByHeader,
+        string yes,
+        string no)
+    {
+        using var context = CreateContext();
+        var descriptor = DocsCatalog.FindByKey("input")!;
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(descriptor.RouteFor(language));
+
+        var component = context.Render<ComponentReference>(parameters =>
+            parameters.Add(page => page.Slug, descriptor.SlugFor(language)));
+        var table = component.Find("gcds-table");
+        using var columns = JsonDocument.Parse(table.GetAttribute("columns")!);
+        using var rows = JsonDocument.Parse(table.GetAttribute("data")!);
+
+        Assert.Equal(nameHeader, columns.RootElement[0].GetProperty("header").GetString());
+        Assert.True(columns.RootElement[0].GetProperty("rowHeader").GetBoolean());
+        Assert.Equal("Type", columns.RootElement[1].GetProperty("header").GetString());
+        Assert.Equal(requiredHeader, columns.RootElement[2].GetProperty("header").GetString());
+        Assert.Equal(defaultHeader, columns.RootElement[3].GetProperty("header").GetString());
+        Assert.Equal(declaredByHeader, columns.RootElement[4].GetProperty("header").GetString());
+        Assert.Contains(rows.RootElement.EnumerateArray(), row =>
+            row.GetProperty("required").GetString() == yes);
+        Assert.Contains(rows.RootElement.EnumerateArray(), row =>
+            row.GetProperty("required").GetString() == no);
+        Assert.Empty(component.FindAll("table.docs-api"));
+    }
+
     [Fact]
     public void ComponentIndex_ArrangesCardsInResponsiveGcdsGrids()
     {

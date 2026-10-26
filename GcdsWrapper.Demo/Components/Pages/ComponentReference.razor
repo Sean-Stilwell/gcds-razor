@@ -44,29 +44,7 @@ else
     }
     else
     {
-        <table class="docs-api">
-            <thead>
-                <tr>
-                    <th scope="col"><GcdsText>@(IsFrench ? "Nom" : "Name")</GcdsText></th>
-                    <th scope="col"><GcdsText>Type</GcdsText></th>
-                    <th scope="col"><GcdsText>@(IsFrench ? "Obligatoire" : "Required")</GcdsText></th>
-                    <th scope="col"><GcdsText>@(IsFrench ? "Valeur par défaut" : "Default")</GcdsText></th>
-                    <th scope="col"><GcdsText>@(IsFrench ? "Déclaré par" : "Declared by")</GcdsText></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var parameter in ApiParameters)
-                {
-                    <tr>
-                        <td><GcdsText>@parameter.Name</GcdsText></td>
-                        <td><GcdsText>@parameter.Type</GcdsText></td>
-                        <td><GcdsText>@(parameter.Required ? (IsFrench ? "Oui" : "Yes") : (IsFrench ? "Non" : "No"))</GcdsText></td>
-                        <td><GcdsText>@(parameter.Default ?? "—")</GcdsText></td>
-                        <td><GcdsText>@parameter.DeclaredBy</GcdsText></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <GcdsTable Columns="@ApiTableColumns" Data="@ApiTableRows" />
     }
 
     @if (Descriptor.Events.Count > 0)
@@ -112,6 +90,22 @@ else
     private string SiteHref(string route) => Navigation.ToAbsoluteUri(route.TrimStart('/')).ToString();
     private DocsComponentDescriptor? Descriptor => DocsCatalog.Find(Language, Slug);
     private IReadOnlyList<DocsApiParameter> ApiParameters => Descriptor is null ? [] : DocsApiReader.Read(Descriptor);
+    private object[] ApiTableColumns =>
+    [
+        new { field = "name", header = IsFrench ? "Nom" : "Name", rowHeader = true },
+        new { field = "type", header = "Type", rowHeader = false },
+        new { field = "required", header = IsFrench ? "Obligatoire" : "Required", rowHeader = false },
+        new { field = "defaultValue", header = IsFrench ? "Valeur par défaut" : "Default", rowHeader = false },
+        new { field = "declaredBy", header = IsFrench ? "Déclaré par" : "Declared by", rowHeader = false }
+    ];
+    private object[] ApiTableRows => ApiParameters.Select(parameter => (object)new
+    {
+        name = parameter.Name,
+        type = parameter.Type,
+        required = parameter.Required ? (IsFrench ? "Oui" : "Yes") : (IsFrench ? "Non" : "No"),
+        defaultValue = parameter.Default ?? "—",
+        declaredBy = parameter.DeclaredBy
+    }).ToArray();
     private IDictionary<string, object> ExampleParameters => new Dictionary<string, object>
     {
         ["Language"] = Language

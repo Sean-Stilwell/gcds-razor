@@ -38,42 +38,7 @@
 <CodeBlock Language="@Language" Code="@UsageSnippet" />
 
 <GcdsHeading Tag="h2">@(IsFrench ? "Paramètres" : "Parameters")</GcdsHeading>
-<table class="docs-api">
-    <thead>
-        <tr>
-            <th scope="col"><GcdsText>@(IsFrench ? "Nom" : "Name")</GcdsText></th>
-            <th scope="col"><GcdsText>Type</GcdsText></th>
-            <th scope="col"><GcdsText>@(IsFrench ? "Valeur par défaut" : "Default")</GcdsText></th>
-            <th scope="col"><GcdsText>@(IsFrench ? "Description" : "Description")</GcdsText></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><GcdsText>Value</GcdsText></td>
-            <td><GcdsText>string?</GcdsText></td>
-            <td><GcdsText>null</GcdsText></td>
-            <td><GcdsText>@(IsFrench ? "Texte Markdown à rendre." : "Markdown text to render.")</GcdsText></td>
-        </tr>
-        <tr>
-            <td><GcdsText>HeadingLevelOffset</GcdsText></td>
-            <td><GcdsText>int</GcdsText></td>
-            <td><GcdsText>0</GcdsText></td>
-            <td><GcdsText>@(IsFrench ? "Décale les titres de 0 à 5 niveaux, jusqu’à h6." : "Shifts headings by 0–5 levels, capped at h6.")</GcdsText></td>
-        </tr>
-        <tr>
-            <td><GcdsText>AllowHtml</GcdsText></td>
-            <td><GcdsText>bool</GcdsText></td>
-            <td><GcdsText>false</GcdsText></td>
-            <td><GcdsText>@(IsFrench ? "Autorise le HTML brut provenant uniquement d’une source fiable." : "Allows raw HTML from a trusted source only.")</GcdsText></td>
-        </tr>
-        <tr>
-            <td><GcdsText>OnLinkClick</GcdsText></td>
-            <td><GcdsText>EventCallback&lt;GcdsMarkdownLinkEventArgs&gt;</GcdsText></td>
-            <td><GcdsText>—</GcdsText></td>
-            <td><GcdsText>@(IsFrench ? "Observe les sélections de liens sans annuler la navigation." : "Observes link selections without cancelling navigation.")</GcdsText></td>
-        </tr>
-    </tbody>
-</table>
+<GcdsTable Columns="@ParameterTableColumns" Data="@ParameterTableRows" />
 
 <GcdsNotice NoticeRole="warning" NoticeTitle="@(IsFrench ? "Sécurité du HTML brut" : "Raw HTML security")" NoticeTitleTag="h2">
     <GcdsText>
@@ -90,6 +55,44 @@
     private string LastLinkMessage => string.IsNullOrEmpty(lastLink)
         ? string.Empty
         : IsFrench ? $"Dernier lien sélectionné : {lastLink}" : $"Last selected link: {lastLink}";
+    private object[] ParameterTableColumns =>
+    [
+        new { field = "name", header = IsFrench ? "Nom" : "Name", rowHeader = true },
+        new { field = "type", header = "Type", rowHeader = false },
+        new { field = "defaultValue", header = IsFrench ? "Valeur par défaut" : "Default", rowHeader = false },
+        new { field = "description", header = "Description", rowHeader = false }
+    ];
+    private object[] ParameterTableRows =>
+    [
+        new
+        {
+            name = "Value",
+            type = "string?",
+            defaultValue = "null",
+            description = IsFrench ? "Texte Markdown à rendre." : "Markdown text to render."
+        },
+        new
+        {
+            name = "HeadingLevelOffset",
+            type = "int",
+            defaultValue = "0",
+            description = IsFrench ? "Décale les titres de 0 à 5 niveaux, jusqu’à h6." : "Shifts headings by 0–5 levels, capped at h6."
+        },
+        new
+        {
+            name = "AllowHtml",
+            type = "bool",
+            defaultValue = "false",
+            description = IsFrench ? "Autorise le HTML brut provenant uniquement d’une source fiable." : "Allows raw HTML from a trusted source only."
+        },
+        new
+        {
+            name = "OnLinkClick",
+            type = "EventCallback<GcdsMarkdownLinkEventArgs>",
+            defaultValue = "—",
+            description = IsFrench ? "Observe les sélections de liens sans annuler la navigation." : "Observes link selections without cancelling navigation."
+        }
+    ];
 
     private string ExampleMarkdown => IsFrench
         ? """
