@@ -1,9 +1,8 @@
 # GCDS Wrapper for Blazor
 
-![NuGet Version](https://img.shields.io/nuget/v/GcdsWrapper.Blazor)
-![NuGet Downloads](https://img.shields.io/nuget/dt/GcdsWrapper.Blazor)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Sean-Stilwell/gcds-razor/.github%2Fworkflows%2Fci.yml)
-
+![Main package NuGet Version](https://img.shields.io/nuget/v/GcdsWrapper.Blazor)
+![Main package NuGet Downloads](https://img.shields.io/nuget/dt/GcdsWrapper.Blazor)
+![Main package GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Sean-Stilwell/gcds-razor/.github%2Fworkflows%2Fci.yml)
 
 Thin, idiomatic Blazor wrappers for the official [GC Design System (GCDS) components](https://design-system.canada.ca/en/). The library maps Razor parameters and events to the upstream web components; it does not reimplement their markup or styles.
 
@@ -156,6 +155,10 @@ Open `/en/components` or `/fr/composants`. Each component page provides a live e
 The Markdown package is documented at `/en/markdown` and `/fr/markdown`.
 
 ## Markdown package
+
+![Markdown package NuGet Version](https://img.shields.io/nuget/v/GcdsWrapper.Blazor.Markdown)
+![Markdown package NuGet Downloads](https://img.shields.io/nuget/dt/GcdsWrapper.Blazor.Markdown)
+![Markdown package GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Sean-Stilwell/gcds-razor/.github%2Fworkflows%2Fmarkdown-ci.yml)
 
 Install the optional Markdown renderer separately:
 
