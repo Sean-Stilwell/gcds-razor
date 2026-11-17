@@ -8,9 +8,9 @@ public sealed class ComponentRenderingTests
     [Fact]
     public void Assets_UsePinnedGcdsVersion()
     {
-        Assert.Equal("1.7.0", GcdsVersion.Components);
+        Assert.Equal("1.7.1", GcdsVersion.Components);
         Assert.Equal(
-            "https://cdn.design-system.canada.ca/@gcds-core/components@1.7.0/dist/gcds",
+            "https://cdn.design-system.canada.ca/@gcds-core/components@1.7.1/dist/gcds",
             GcdsVersion.CdnBase);
     }
 
