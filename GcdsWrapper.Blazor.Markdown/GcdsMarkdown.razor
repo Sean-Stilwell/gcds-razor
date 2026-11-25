@@ -7,6 +7,7 @@
 @using Markdig.Syntax
 @using Markdig.Syntax.Inlines
 @using Microsoft.AspNetCore.Components.Rendering
+@using System.Text
 @inject NavigationManager Navigation
 
 <article class="@RootClass" @attributes="RootAttributes">@DocumentContent</article>
@@ -158,7 +159,9 @@
             builder.AddComponentParameter(sequence++, nameof(GcdsText.ChildContent), (RenderFragment)(contentBuilder =>
             {
                 var childSequence = 0;
+                contentBuilder.OpenElement(childSequence++, "p");
                 RenderInlines(contentBuilder, ref childSequence, paragraph.Inline);
+                contentBuilder.CloseElement();
             }));
             builder.CloseComponent();
             return;
@@ -186,44 +189,59 @@
 
     private void RenderTable(RenderTreeBuilder builder, ref int sequence, Table table)
     {
-        builder.OpenElement(sequence++, "div");
-        builder.AddAttribute(sequence++, "class", "gcds-markdown-table-wrapper");
-        builder.OpenElement(sequence++, "table");
-
         var rows = table.OfType<TableRow>().ToArray();
-        var headerRows = rows.TakeWhile(row => row.IsHeader).ToArray();
-        if (headerRows.Length > 0)
+        var headerCells = rows.FirstOrDefault(row => row.IsHeader)?.OfType<TableCell>().ToArray() ?? [];
+        var columnCount = table.ColumnDefinitions.Count;
+        var columns = new object[columnCount];
+        for (var index = 0; index < columnCount; index++)
         {
-            builder.OpenElement(sequence++, "thead");
-            foreach (var row in headerRows)
-                RenderTableRow(builder, ref sequence, row, header: true);
-            builder.CloseElement();
+            columns[index] = new Dictionary<string, object>
+            {
+                ["field"] = $"column{index}",
+                ["header"] = index < headerCells.Length ? PlainText(headerCells[index]) : string.Empty,
+                ["alignment"] = TableAlignment(table.ColumnDefinitions[index].Alignment)
+            };
         }
 
-        var bodyRows = rows.Skip(headerRows.Length).ToArray();
-        if (bodyRows.Length > 0)
-        {
-            builder.OpenElement(sequence++, "tbody");
-            foreach (var row in bodyRows)
-                RenderTableRow(builder, ref sequence, row, header: false);
-            builder.CloseElement();
-        }
+        var data = rows
+            .Where(row => !row.IsHeader)
+            .Select(row =>
+            {
+                var cells = row.OfType<TableCell>().ToArray();
+                var values = new Dictionary<string, string>(columnCount);
+                for (var index = 0; index < columnCount; index++)
+                {
+                    values[$"column{index}"] = index < cells.Length
+                        ? PlainText(cells[index])
+                        : string.Empty;
+                }
+                return values;
+            })
+            .ToArray();
 
-        builder.CloseElement();
-        builder.CloseElement();
+        builder.OpenComponent<GcdsTable>(sequence++);
+        builder.AddComponentParameter(sequence++, nameof(GcdsTable.Columns), columns);
+        builder.AddComponentParameter(sequence++, nameof(GcdsTable.Data), data);
+        builder.CloseComponent();
     }
 
-    private void RenderTableRow(RenderTreeBuilder builder, ref int sequence, TableRow row, bool header)
+    private static string TableAlignment(TableColumnAlign? alignment) => alignment switch
     {
-        builder.OpenElement(sequence++, "tr");
-        foreach (var cell in row.OfType<TableCell>())
+        TableColumnAlign.Center => "center",
+        TableColumnAlign.Right => "end",
+        _ => "start"
+    };
+
+    private static string PlainText(TableCell cell)
+    {
+        var text = new StringBuilder();
+        foreach (var block in cell)
         {
-            builder.OpenElement(sequence++, header ? "th" : "td");
-            if (header) builder.AddAttribute(sequence++, "scope", "col");
-            RenderBlocks(builder, ref sequence, cell, topLevel: true);
-            builder.CloseElement();
+            if (block is not LeafBlock { Inline: { } inlines }) continue;
+            if (text.Length > 0) text.Append(' ');
+            AppendPlainText(text, inlines);
         }
-        builder.CloseElement();
+        return text.ToString().Trim();
     }
 
     private static void RenderCodeBlock(
@@ -386,6 +404,35 @@
         return normalized.Length == 0 ? null : normalized;
     }
 
-    private static string PlainText(ContainerInline inlines) => string.Concat(
-        inlines.Descendants<LiteralInline>().Select(literal => literal.Content.ToString()));
+    private static string PlainText(ContainerInline inlines)
+    {
+        var text = new StringBuilder();
+        AppendPlainText(text, inlines);
+        return text.ToString();
+    }
+
+    private static void AppendPlainText(StringBuilder text, ContainerInline inlines)
+    {
+        foreach (var inline in inlines)
+        {
+            switch (inline)
+            {
+                case LiteralInline literal:
+                    text.Append(literal.Content);
+                    break;
+                case CodeInline code:
+                    text.Append(code.Content);
+                    break;
+                case LineBreakInline:
+                    text.Append(' ');
+                    break;
+                case AutolinkInline autoLink:
+                    text.Append(autoLink.Url);
+                    break;
+                case ContainerInline container:
+                    AppendPlainText(text, container);
+                    break;
+            }
+        }
+    }
 }
