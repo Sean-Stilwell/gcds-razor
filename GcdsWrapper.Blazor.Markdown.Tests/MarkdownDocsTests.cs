@@ -37,7 +37,14 @@ public sealed class MarkdownDocsTests
             code.TextContent.Contains(IsFrenchRoute(route) ? "- [x] Lire le guide" : "- [x] Read the guide", StringComparison.Ordinal) &&
             code.TextContent.Contains(IsFrenchRoute(route) ? "- [ ] Envoyer la demande" : "- [ ] Submit the application", StringComparison.Ordinal));
 
-        var table = page.Find("gcds-table");
+        var previewTable = page.Find(".docs-preview gcds-table");
+        using var previewColumns = JsonDocument.Parse(previewTable.GetAttribute("columns")!);
+        using var previewRows = JsonDocument.Parse(previewTable.GetAttribute("data")!);
+        Assert.Equal(IsFrenchRoute(route) ? "Étape" : "Step",
+            previewColumns.RootElement[0].GetProperty("header").GetString());
+        Assert.Equal(2, previewRows.RootElement.GetArrayLength());
+
+        var table = page.FindAll("gcds-table").Last();
         using var columns = JsonDocument.Parse(table.GetAttribute("columns")!);
         using var rows = JsonDocument.Parse(table.GetAttribute("data")!);
         Assert.Equal(IsFrenchRoute(route) ? "Nom" : "Name",
