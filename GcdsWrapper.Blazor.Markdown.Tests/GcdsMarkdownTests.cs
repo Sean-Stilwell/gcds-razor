@@ -1,6 +1,7 @@
 using Bunit;
 using GcdsWrapper.Blazor;
 using Microsoft.AspNetCore.Components;
+using System.Text.Json;
 using Xunit;
 
 namespace GcdsWrapper.Blazor.Markdown.Tests;
@@ -34,14 +35,14 @@ public sealed class GcdsMarkdownTests
         Assert.Equal("h1", component.Find("gcds-heading").GetAttribute("tag"));
         Assert.Equal("Service guide", component.Find("gcds-heading").TextContent.Trim());
         Assert.Equal("guide", component.Find("gcds-heading strong").TextContent);
-        Assert.Contains("Read the instructions", component.Find("gcds-text").TextContent);
-        Assert.Equal("instructions", component.Find("gcds-text em").TextContent);
-        Assert.Equal("ignore this", component.Find("gcds-text del").TextContent);
-        Assert.Equal("code", component.Find("gcds-text code").TextContent);
+        Assert.Contains("Read the instructions", component.Find("article > gcds-text > p").TextContent);
+        Assert.Equal("instructions", component.Find("gcds-text > p em").TextContent);
+        Assert.Equal("ignore this", component.Find("gcds-text > p del").TextContent);
+        Assert.Equal("code", component.Find("gcds-text > p code").TextContent);
         Assert.Equal("Important information.", component.Find("blockquote p").TextContent.Trim());
         Assert.Equal(2, component.FindAll("article > ul > li").Count);
         Assert.Single(component.FindAll("article > ul > li > ul"));
-        Assert.All(component.FindAll("article li"), item => Assert.NotNull(item.QuerySelector(":scope > gcds-text")));
+        Assert.All(component.FindAll("article li"), item => Assert.NotNull(item.QuerySelector(":scope > gcds-text > p")));
         Assert.Equal("1", component.Find("article > ol").GetAttribute("start") ?? "1");
         Assert.Single(component.FindAll("hr"));
     }
@@ -51,9 +52,9 @@ public sealed class GcdsMarkdownTests
     {
         using var context = CreateContext();
         const string markdown = """
-            | Name | Status |
-            | --- | --- |
-            | **Alpha** | [Active](/status) |
+            | **Name** | Status |
+            | :--- | ---: |
+            | **Alpha** | [Active](/status), `code`, ![GC](/gc.svg) |
 
             - [x] Complete
             - [ ] Pending
@@ -68,10 +69,19 @@ public sealed class GcdsMarkdownTests
         var component = context.Render<GcdsMarkdown>(parameters => parameters
             .Add(item => item.Value, markdown));
 
-        Assert.Equal(["Name", "Status"], component.FindAll("thead th").Select(cell => cell.TextContent.Trim()));
-        Assert.All(component.FindAll("th, td"), cell => Assert.NotNull(cell.QuerySelector(":scope > gcds-text")));
-        Assert.Equal("Alpha", component.Find("tbody strong").TextContent);
-        Assert.Equal("/status", component.Find("tbody gcds-link").GetAttribute("href"));
+        var table = component.Find("gcds-table");
+        using var columns = JsonDocument.Parse(table.GetAttribute("columns")!);
+        using var data = JsonDocument.Parse(table.GetAttribute("data")!);
+        Assert.Equal("column0", columns.RootElement[0].GetProperty("field").GetString());
+        Assert.Equal("Name", columns.RootElement[0].GetProperty("header").GetString());
+        Assert.Equal("start", columns.RootElement[0].GetProperty("alignment").GetString());
+        Assert.Equal("column1", columns.RootElement[1].GetProperty("field").GetString());
+        Assert.Equal("Status", columns.RootElement[1].GetProperty("header").GetString());
+        Assert.Equal("end", columns.RootElement[1].GetProperty("alignment").GetString());
+        Assert.False(columns.RootElement[0].TryGetProperty("rowHeader", out _));
+        Assert.Equal("Alpha", data.RootElement[0].GetProperty("column0").GetString());
+        Assert.Equal("Active, code, GC", data.RootElement[0].GetProperty("column1").GetString());
+        Assert.Empty(component.FindAll(".gcds-markdown-table-wrapper, article table, article th, article td"));
         var tasks = component.FindAll("input[type='checkbox']");
         Assert.Equal(2, tasks.Count);
         Assert.All(tasks, task => Assert.True(task.HasAttribute("disabled")));
@@ -96,8 +106,8 @@ public sealed class GcdsMarkdownTests
         var link = component.Find("gcds-link");
         Assert.Equal("https://example.com", link.GetAttribute("href"));
         Assert.Equal("true", link.GetAttribute("external"));
-        Assert.Single(component.FindAll("gcds-text br"));
-        Assert.Contains("Next line", component.Find("gcds-text").TextContent);
+        Assert.Single(component.FindAll("gcds-text > p > br"));
+        Assert.Contains("Next line", component.Find("gcds-text > p").TextContent);
     }
 
     [Theory]
@@ -237,6 +247,26 @@ public sealed class GcdsMarkdownTests
 
         component.Render(parameters => parameters.Add(item => item.Value, string.Empty));
         Assert.Empty(component.Find("article").Children);
+    }
+
+    [Fact]
+    public void TableValueChanges_ReplaceColumnsAndRows()
+    {
+        using var context = CreateContext();
+        var component = context.Render<GcdsMarkdown>(parameters => parameters
+            .Add(item => item.Value, "| First |\n| --- |\n| One |"));
+
+        component.Render(parameters => parameters
+            .Add(item => item.Value, "| Second | Third |\n| --- | --- |\n| Two | Three |"));
+
+        var table = component.Find("gcds-table");
+        using var columns = JsonDocument.Parse(table.GetAttribute("columns")!);
+        using var data = JsonDocument.Parse(table.GetAttribute("data")!);
+        Assert.Equal(2, columns.RootElement.GetArrayLength());
+        Assert.Equal("Second", columns.RootElement[0].GetProperty("header").GetString());
+        Assert.Equal("Third", columns.RootElement[1].GetProperty("header").GetString());
+        Assert.Equal("Two", data.RootElement[0].GetProperty("column0").GetString());
+        Assert.Equal("Three", data.RootElement[0].GetProperty("column1").GetString());
     }
 
     private static BunitContext CreateContext()
